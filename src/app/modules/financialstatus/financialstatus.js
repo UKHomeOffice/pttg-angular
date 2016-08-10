@@ -101,14 +101,7 @@ function ($scope, $state, FinancialstatusService) {
 financialstatusModule.controller(
 'FinancialstatusDetailsCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'FinancialstatusService', 'IOService', '$window', '$timeout',
 function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOService, $window, $timeout) {
-  var element = $window.document.getElementById('pageTitle');
-  console.log(element);
-  // element.focus();
-  $timeout(function () {
-    var element = $window.document.getElementById('pageTitle');
-    console.log('Timeout', element);
-    // element.focus();
-  });
+
   var opt = _.findWhere(FinancialstatusService.getStudentTypes(), {value: $stateParams.studentType});
   var showTuition = (opt.value !== 'doctorate');
   if (!opt) {

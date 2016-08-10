@@ -52,7 +52,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
     },
     templateUrl: 'modules/forms/forms.html',
 
-    controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+    controller: ['$scope', '$element', '$attrs', '$window', '$timeout', function($scope, $element, $attrs, $window, $timeout) {
       var me = this;
       var objs = $scope.objs = [];
       $scope.errorList = [];
@@ -90,8 +90,17 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             // show the message within the component
             obj.displayError = obj.errorMsg
 
+            switch (obj.type) {
+              case 'text':
+              case 'number':
+                a = obj.id + '-input';
+                break;
+              case 'date':
+                a = obj.id + '-day'
+            }
+
             // add the error to the list of summary errors for the top of the page
-            errorList.push({ id: obj.id, msg: obj.errorSummary, code: obj.errorCode });
+            errorList.push({ id: obj.id, msg: obj.errorSummary, code: obj.errorCode, anchor: a});
           }
         });
 
@@ -102,12 +111,22 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
       };
 
       $scope.errorClicked = function (anchor) {
-        $anchorScroll(anchor);
+        var e = angular.element(document.getElementById(anchor));
+        console.log('errorClicked', anchor, e);
+        if (e[0]) {
+          e[0].focus();
+        }
       };
 
       $scope.submitForm = function () {
         if (me.validateForm()) {
           $scope.showErrors = true;
+          $timeout(function () {
+            var e = angular.element(document.querySelector('.error-summary'));
+            if (e[0]) {
+              e[0].focus();
+            }
+          });
         } else {
           $scope.showErrors = false;
         }
@@ -268,7 +287,7 @@ formsModule.directive('hodRadio', [function () {
     compile: function(element, attrs) {
       defaultAttrs(attrs, {hint: '', label: '', inline: false});
       return function(scope, element, attrs, formCtrl, transclude) {
-
+        scope.type = 'radio';
         scope.displayError = '';
         if (!scope.config) {
           scope.config = {};
@@ -359,12 +378,8 @@ formsModule.directive('hodDate', [function () {
       defaultAttrs(attrs, {hint: '', label: '', required: true});
 
       return function(scope, element, attrs, formCtrl) {
+        scope.type = 'date';
         scope.displayError = '';
-        // scope.data = {
-        //   day: '',
-        //   month: '',
-        //   year: ''
-        // };
 
         if (!scope.config) {
           scope.config = {};
@@ -490,6 +505,7 @@ formsModule.directive('hodSortCode', [function () {
       defaultAttrs(attrs, {hint: '', label: '', required: true, errorInline: 'Enter a valid sort code', error: 'The sort code is invalid'});
 
       return function(scope, element, attrs, formCtrl) {
+        scope.type = 'sortcode';
         formCtrl.addObj(scope);
         scope.data = {part1: '', part2: '', part3: ''};
 
@@ -552,6 +568,7 @@ formsModule.directive('hodSubmit', [function () {
         attrs.$set('value', 'Submit');
       }
       return function(scope, element, attrs, formCtrl) {
+        scope.type = 'submit';
         var formEl = formCtrl.getForm();
         scope.disable = function () {
           // return formEl.$invalid;

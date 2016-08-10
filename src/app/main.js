@@ -29,28 +29,22 @@ app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $ur
   });
 }]);
 
+
 app.run(['$location', '$rootScope', '$window', '$timeout', function($location, $rootScope, $window, $timeout) {
   // see http://simplyaccessible.com/article/spangular-accessibility/
-
-  // var history; // stores uri of last page viewed - Used to track if we should set focus to main h1
-  // var currentURL; // store uri of current page viewed - Used to track if we should set focus to main h1
-
 
   $rootScope.$on('$viewContentLoaded', function () {
     // http://stackoverflow.com/questions/25596399/set-element-focus-in-angular-way
 
-
+    // http://www.accessiq.org/news/features/2013/03/aria-and-accessibility-adding-focus-to-any-html-element
 
     $timeout(function() {
-      // var element = $window.document.getElementById('pageTitle');
-      // element.focus();
+      var e = angular.element(document.querySelector('#pageTitle'));
+      if (e[0]) {
+        e[0].focus();
+      }
     });
 
-    // if(element) {
-    //   element.
-    //   element.focus();
-    //   console.log('Set focus', element);
-    // }
   });
 }]);
 
