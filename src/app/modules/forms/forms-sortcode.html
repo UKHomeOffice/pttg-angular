@@ -1,0 +1,25 @@
+<div class="form-group" ng-class="{error: showErrors()}">
+  <fieldset>
+    <legend class="form-label-bold">{{ label }}</legend>
+    <div class="form-date">
+      <span class="form-hint">{{ hint }}</span>
+      <div ng-if="showErrors()" id="{{ id }}-error-message" class="form-error validation-message">
+        {{ errorInline }}
+      </div>
+      <div class="form-group form-group-sortcode">
+        <label for="{{ name }}-part1" class="visuallyhidden">Sortcode part 1</label>
+        <input class="form-control" name="{{ name }}-part1" id="{{ name }}-part1" type="text" ng-model="data.part1" ng-change="itChanged()" autocomplete="off" maxlength="2" />
+      </div>
+
+      <div class="form-group form-group-sortcode">
+        <label for="{{ name }}-part2" class="visuallyhidden">Sortcode part 2</label>
+        <input class="form-control" name="{{ name }}-part2" id="{{ name }}-part2" type="text" ng-model="data.part2" ng-change="itChanged()" autocomplete="off" maxlength="2" />
+      </div>
+
+      <div class="form-group form-group-sortcode">
+        <label for="{{ name }}-part3" class="visuallyhidden">Sortcode part 3</label>
+        <input class="form-control" name="{{ name }}-part3" id="{{ name }}-part3" type="text" ng-model="data.part3" ng-change="itChanged()" autocomplete="off" maxlength="2" />
+      </div>
+    </div>
+  </fieldset>
+</div>

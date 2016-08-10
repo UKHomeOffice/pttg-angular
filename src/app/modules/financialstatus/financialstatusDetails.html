@@ -1,0 +1,30 @@
+<div class="column-full-width ng-scope">
+  <div id="page1">
+    <h1 class="heading-large" id="pageTitle" role="alert"><span id="pageSubHeading">{{ selectedType.label }}</span></h1>
+
+    <hod-form name="finStatusDetails">
+
+      <hod-date label="End date of 28-day period" field="finStatus.toDate" hint="Includes the date entered" config="conf.toDate"></hod-date>
+
+      <hod-radio label="Inner London borough?" field="finStatus.innerLondonBorough" options="yesNoOptions" config="conf.london"></hod-radio>
+
+      <hod-date label="Course start date" field="finStatus.courseStartDate"></hod-date>
+
+      <hod-date label="Course end date" field="finStatus.courseEndDate"></hod-date>
+
+      <hod-number label="Accommodation fees already paid" field="finStatus.accommodationFeesAlreadyPaid"></hod-number>
+
+      <hod-number label="Number of dependants" field="finStatus.numberOfDependants"></hod-number>
+
+      <!-- <hod-sort-code label="Sort code" hint="For example, 12 34 56" field="finStatus.sortCode"></hod-sort-code> -->
+
+      <hod-number label="Account number" field="finStatus.accountNumber" hint="For example, 12345678"></hod-number>
+
+      <hod-submit value="Check financial status"></hod-submit>
+
+    </hod-form>
+    <pre>
+      <p ng-repeat="(key, val) in finStatus">{{ key }} = {{ val }}</p>
+    </pre>
+  </div>
+</div>

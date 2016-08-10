@@ -1,0 +1,58 @@
+<h1>{{ testElement }}</h1>
+
+<div ng-if="testElement === 'text'">
+  <hod-form id="testFormText">
+    <!-- test defaults -->
+    <hod-text></hod-text>
+
+    <!-- test autoassign id  -->
+    <hod-text label="This is my first test"></hod-text>
+
+    <!-- test basics -->
+    <hod-text label="Forename" name="forename" id="forename_id" hint="Let me give you a clue" required="false"></hod-text>
+
+
+    <hod-text label="Surname" name="surname" hint="What is your name" field="values.surname" config="confSurname"></hod-text>
+
+    <hod-number label="A number" name="numTest" hint="Enter a number" field="values.n"></hod-number>
+
+    <hod-number label="Max test" name="maxTest" hint="Enter a number up to 123" field="values.max" max="123"></hod-number>
+
+    <hod-number label="Float test" name="floatMaxTest" hint="Enter a number up to 123" field="values.float" config="confFloat"></hod-number>
+
+    <hod-submit></hod-submit>
+  </hod-form>
+
+  <p id="surnameFeedback">values.surname = <span>{{ values.surname }}</span></p>
+</div>
+
+
+<div ng-if="testElement === 'radio'">
+  <hod-form id="testFormRadio">
+
+    <hod-radio name="student-type" label="Student type" field="values.sType" options="sTypeOptions" config="confType"></hod-radio>
+
+    <hod-radio name="london" label="In London" field="values.london" options="londonOptions" config="confLondon"></hod-radio>
+
+    <hod-submit></hod-submit>
+  </hod-form>
+</div>
+
+
+<div ng-if="testElement === 'date'">
+  <hod-form id="testFormDate">
+
+    <hod-date label="Start date" field="values.start"></hod-date>
+
+    <hod-date label="End date" hint="When does this thing end" field="values.end" config="confEnd"></hod-date>
+
+    <hod-submit></hod-submit>
+  </hod-form>
+  <p id="startFeedback">{{ values.start }}</p>
+  <p id="endFeedback">{{ values.end }}</p>
+</div>
+
+
+
+
+

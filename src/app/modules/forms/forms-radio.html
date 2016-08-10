@@ -1,0 +1,13 @@
+<div id="{{ name }}-form-group" class="form-group"  ng-class="{error: displayError}">
+  <fieldset ng-class="{inline: config.inline}">
+    <legend class="form-label-bold">{{ label }}</legend>
+    <div class="form-hint">{{ hint }}</div>
+    <div ng-if="displayError" id="{{ id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
+    <div class="radio-group" ng-repeat="(i, opt) in options">
+      <label class="block-label" for="{{ id }}-{{ i }}">
+        <input id="{{ id }}-{{ i }}" type="radio" name="{{ name }}" ng-model="field" value="{{ opt.value }}" ng-click="radioClick(opt)" ng-required="config.required" ui-validate="'validfunc($value)'" />
+        {{ opt.label }}
+      </label>
+    </div>
+  </fieldset>
+</div>
