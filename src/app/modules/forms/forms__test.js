@@ -45,6 +45,10 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     // dates
     start: '',
     end: '1974-05-13',
+
+    //
+    sortcode: '123456',
+    sortcode2: ''
   };
 
   // config for radio item
@@ -96,6 +100,11 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
         summary: 'The end date is unacceptable'
       }
     }
+  };
+
+  $scope.confDob = {
+    max: '1974-05-13',
+    min: '1950-05-13'
   };
 
   $scope.submit = function () {

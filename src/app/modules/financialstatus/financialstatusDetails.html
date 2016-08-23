@@ -6,19 +6,25 @@
 
       <hod-date label="End date of 28-day period" field="finStatus.toDate" hint="Includes the date entered" config="conf.toDate"></hod-date>
 
-      <hod-radio label="Inner London borough?" field="finStatus.innerLondonBorough" options="yesNoOptions" config="conf.london"></hod-radio>
+      <hod-radio label="In London?" field="finStatus.innerLondonBorough" options="yesNoOptions" config="conf.london"></hod-radio>
 
       <hod-date label="Course start date" field="finStatus.courseStartDate"></hod-date>
 
       <hod-date label="Course end date" field="finStatus.courseEndDate"></hod-date>
 
-      <hod-number label="Accommodation fees already paid" field="finStatus.accommodationFeesAlreadyPaid"></hod-number>
+      <hod-number label="Total tuition fees for the first year" field="finStatus.totalTuitionFees" hint="For example, £9000"></hod-number>
 
-      <hod-number label="Number of dependants" field="finStatus.numberOfDependants"></hod-number>
+      <hod-number label="Total tuition fees already paid" field="finStatus.tuitionFeesAlreadyPaid" hint="For example, £3000"></hod-number>
 
-      <!-- <hod-sort-code label="Sort code" hint="For example, 12 34 56" field="finStatus.sortCode"></hod-sort-code> -->
+      <hod-number label="Accommodation fees already paid" field="finStatus.accommodationFeesAlready"></hod-number>
+
+      <hod-number label="Number of dependants" field="finStatus.numberOfDependants" config="conf.numberOfDependants"></hod-number>
+
+      <hod-sortcode label="Sort code" hint="For example, 12 34 56" field="finStatus.sortCode"></hod-sortcode>
 
       <hod-number label="Account number" field="finStatus.accountNumber" hint="For example, 12345678"></hod-number>
+
+      <hod-date label="Date of birth" field="finStatus.dob" config="conf.dob"></hod-date>
 
       <hod-submit value="Check financial status"></hod-submit>
 

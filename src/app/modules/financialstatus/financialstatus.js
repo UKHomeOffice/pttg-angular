@@ -46,17 +46,18 @@ financialstatusModule.factory('FinancialstatusService', [function () {
   // get the defaults
   this.getBlank = function () {
     return {
-      accommodationFeesAlreadyPaid: '',
-      courseStartDate: '',
-      courseEndDate: '',
-      innerLondonBorough: null,
-      numberOfDependants: '',
       studentType: '',
       toDate: '',
+      innerLondonBorough: null,
+      courseStartDate: '',
+      courseEndDate: '',
       totalTuitionFees: '',
       tuitionFeesAlreadyPaid: '',
+      accommodationFeesAlreadyPaid: '',
+      numberOfDependants: '',
       sortCode: '',
-      accountNumber: ''
+      accountNumber: '',
+      dob: ''
     };
   };
 
@@ -110,18 +111,25 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
     return;
   }
 
-  $scope.conf = {};
-  $scope.conf.toDate = {
-    stdErrors: {
-      inline: 'Date is invalid',
-      summary: 'The end date is invalid'
+  $scope.conf = {
+    toDate: {
+      stdErrors: {
+        inline: 'Date is invalid',
+        summary: 'The end date is invalid'
+      },
+      onChange: function (before, after) {
+        console.log('onChange', before, after);
+      },
     },
-    onChange: function (before, after) {
-      console.log('onChange', before, after);
+    london: {
+      inline: true
     },
-  };
-  $scope.conf.london = {
-    inline: true
+    numberOfDependants: {
+      classes: { 'form-control-1-8': true }
+    },
+    dob: {
+
+    }
   };
 
   $scope.finStatus = FinancialstatusService.getDetails();
@@ -129,28 +137,27 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
   $scope.showTuition = showTuition;
   $scope.yesNoOptions = [{label: 'Yes', value: true}, {label: 'No', value: false}];
 
-  $scope.v = {
-    toDate: function () {
-      console.log('validation toDate');
-      return true;
-    },
-    courseLength: function (value) {
-      return (Number(value) <= 9 && value.length) ? true: false;
-    },
-    accomPaid: function (value) {
-      return (Number(value) <= 1265) ? true: false;
-    },
-    int: function (value) {
-      var n = Number(value);
-      return (n === Math.floor(n) && n === Math.ceil(n)) ? true : false;
-    },
-    accountNumber: function (value) {
-      return (Number(value) >= 10000000) ? true : false;
-    }
-  };
+  // $scope.v = {
+  //   toDate: function () {
+  //     console.log('validation toDate');
+  //     return true;
+  //   },
+  //   courseLength: function (value) {
+  //     return (Number(value) <= 9 && value.length) ? true: false;
+  //   },
+  //   accomPaid: function (value) {
+  //     return (Number(value) <= 1265) ? true: false;
+  //   },
+  //   int: function (value) {
+  //     var n = Number(value);
+  //     return (n === Math.floor(n) && n === Math.ceil(n)) ? true : false;
+  //   },
+  //   accountNumber: function (value) {
+  //     return (Number(value) >= 10000000) ? true : false;
+  //   }
+  // };
 
   $scope.validfunc = function (val) {
-    console.log('HELLO validfunc', val);
     return true;
   }
 

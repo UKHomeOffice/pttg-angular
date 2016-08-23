@@ -4,6 +4,6 @@
     <label class="form-label-bold {{ type }}" for="{{ id }}-input">{{ label }}</label>
     <div class="form-hint">{{ hint }}</div>
     <div ng-if="displayError" id="{{ id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
-    <input id="{{ id }}-input" name="{{ name }}" class="form-control" ng-class="classes" type="text" ng-model="field" ui-validate="'validfunc($value)'" maxlength="{{ maxlength }}" />
+    {{ config.prefix }}<input id="{{ id }}-input" name="{{ name }}" class="form-control" ng-class="config.classes" type="text" ng-model="field" ui-validate="'validfunc($value)'" maxlength="{{ maxlength }}" />{{ config.suffix }}
   </div>
 </fieldset>

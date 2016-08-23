@@ -2,13 +2,6 @@
 describe('HOD Forms:', function () {
   var submit;
   var form;
-  // it('should have a forms test page route', function () {
-  //   browser.get('http://127.0.0.1:3000/#/forms-test');
-  //   form = element(by.id('testFormText'));
-  //   expect(form.getAttribute('name')).toEqual('hodForm');
-  //   submit = element(by.tagName('hod-submit')).element(by.tagName('input'));
-  // });
-
 
   describe('Text input', function () {
     var hodTextInstances;
@@ -265,6 +258,259 @@ describe('HOD Forms:', function () {
         expect(element(by.id('endFeedback')).getText()).toEqual('1974-05-13');
       });
 
+    });
+
+    describe('Max date', function () {
+
+      var dobElement = element(by.id('dob'));
+      var dobDay = element(by.id('dob-day'));
+      var dobMonth = element(by.id('dob-month'));
+      var dobYear = element(by.id('dob-year'));
+
+      describe('Date entered is after (greater than) the maximum date', function () {
+        it('should fail if Date 1 day greater', function () {
+          dobDay.sendKeys('14');
+          dobMonth.sendKeys('5');
+          dobYear.sendKeys('1974');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeTruthy();
+        });
+
+        it('should fail if Date 1 month greater', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('6');
+          dobYear.clear().sendKeys('1974');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+        });
+
+        it('should fail if Date 1 year greater', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1975');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+        });
+
+      });
+
+      describe('Date entered is before (less than) the maximum date', function () {
+        it('should pass if Date 1 day less than', function () {
+          dobDay.clear().sendKeys('12');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1974');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
+        });
+
+        it('should pass if Date 1 month less than', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('4');
+          dobYear.clear().sendKeys('1974');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+        });
+
+        it('should pass if Date 1 year less than', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1973');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+        });
+      });
+
+      describe('Date entered is equal to the maximum date', function () {
+        it('should pass if Date is equal to max date', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1974');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
+        });
+      });
+    });
+
+    describe('Min date', function () {
+
+      var dobElement = element(by.id('dob'));
+      var dobDay = element(by.id('dob-day'));
+      var dobMonth = element(by.id('dob-month'));
+      var dobYear = element(by.id('dob-year'));
+
+      describe('Date entered is before (less than) the minimum date', function () {
+        it('should fail if Date 1 day before', function () {
+          dobDay.clear().sendKeys('12');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1950');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeTruthy();
+        });
+
+        it('should fail if Date 1 month before', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('4');
+          dobYear.clear().sendKeys('1950');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+        });
+
+        it('should fail if Date 1 year before', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1949');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+        });
+
+      });
+
+      describe('Date entered is before (greater than) the minimum date', function () {
+        it('should pass if Date 1 day greater than', function () {
+          dobDay.clear().sendKeys('14');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1950');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
+        });
+
+        it('should pass if Date 1 month greater than', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('6');
+          dobYear.clear().sendKeys('1950');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+        });
+
+        it('should pass if Date 1 year greater than', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1951');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+        });
+      });
+
+      describe('Date entered is equal to the minimum date', function () {
+        it('should pass if Date is equal to min date', function () {
+          dobDay.clear().sendKeys('13');
+          dobMonth.clear().sendKeys('5');
+          dobYear.clear().sendKeys('1950');
+
+          submit.click();
+          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+          expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
+        });
+      });
+    });
+
+  });
+
+  describe('Sortcode', function () {
+    var sortcodeElement = element(by.id('sortcode0'));
+    var sortcodePt1 = element(by.id('sortcode0-part1'));
+    var sortcodePt2 = element(by.id('sortcode0-part2'));
+    var sortcodePt3 = element(by.id('sortcode0-part3'));
+
+    it('should have a forms test page just for sortcode tests', function () {
+      browser.get('http://127.0.0.1:3000/#/forms-test/sortcode');
+      expect(element.all(by.tagName('h1')).first().getText()).toEqual('sortcode');
+    });
+
+    it('should have the start values defined by the field object', function () {
+      expect(sortcodePt1.getAttribute('value')).toEqual('12');
+      expect(sortcodePt2.getAttribute('value')).toEqual('34');
+      expect(sortcodePt3.getAttribute('value')).toEqual('56');
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('123456');
+    });
+
+    it ('should respect the required attribute', function () {
+      // no errors should be present at this point
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+
+      // blank sortcode1 which is required sortcode2 is not
+      sortcodePt1.clear();
+      sortcodePt2.clear();
+      sortcodePt3.clear();
+
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('');
+    });
+
+    it('should accept numeric characters', function () {
+      // fill the first sort code correctly again
+      sortcodePt1.clear().sendKeys('11');
+      sortcodePt2.clear().sendKeys('22');
+      sortcodePt3.clear().sendKeys('33');
+
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('112233');
+    });
+
+    it('should reject non numeric characters', function () {
+      // wrong
+      sortcodePt1.clear().sendKeys('a1');
+      sortcodePt2.clear().sendKeys('b2');
+      sortcodePt3.clear().sendKeys('88');
+
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('a1b288');
+    });
+
+    it('should reject values of single digit', function () {
+      // wrong
+      sortcodePt1.clear().sendKeys('1');
+      sortcodePt2.clear().sendKeys('1');
+      sortcodePt3.clear().sendKeys('1');
+
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('111');
+    });
+
+    it('should accept values less than 10 if preceeded by zero', function () {
+      // wrong
+      sortcodePt1.clear().sendKeys('01');
+      sortcodePt2.clear().sendKeys('01');
+      sortcodePt3.clear().sendKeys('01');
+
+      submit.click();
+      expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+      expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
+      expect(element(by.id('sortcodeFeedback')).getText()).toEqual('010101');
     });
   });
 });

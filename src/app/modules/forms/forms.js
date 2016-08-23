@@ -1,5 +1,13 @@
 var formsModule = angular.module('hod.forms', ['ui.validate']);
 
+
+/**
+  * utiltity function to ensure some default key/values are present
+  * in the attribute object - the original attribute object is modifed
+  * @param object current angular attribute object
+  * @param object defaults object key-value pairs of defaults
+  * @return void the original attribute object is modifed
+*/
 var defaultAttrs = function (attrs, defaults) {
   _.each(defaults, function (def, key) {
     if (attrs[key] === undefined) {
@@ -7,17 +15,28 @@ var defaultAttrs = function (attrs, defaults) {
     }
   });
 
+  // force an attribute name - this function is used exclusively for form input type structures
   if (!attrs['name']) {
     attrs.$set('name', getInputName(attrs));
   }
 
+  // force an ID
   if (!attrs['id']) {
     attrs.$set('id', attrs.name);
   }
 };
 
 
+// use a global counter to ensure uniqueness when generating an input name
 var nameIndexCounter = 0;
+
+
+/**
+  * try to determine a suitable name for an input element
+  * if no name is specified in the attributes then create one from the label
+  * @param object angular directive attribute object
+  * @return string the name to use
+*/
 var getInputName = function (attrs) {
   if (attrs.name) {
     return attrs.name;
@@ -29,17 +48,145 @@ var getInputName = function (attrs) {
   return 'input' + nameIndexCounter++;
 };
 
+
+/**
+  * create the FormsService static to handle global form functions
+*/
 formsModule.factory('FormsService', [function () {
   var register = {};
-
+  var me = this;
   this.registerForm = function (f) {
     var id = f.getId();
     register[id] = f;
   };
 
+  this.getError = function (err, scope) {
+    var errorObj = {
+      err: err,
+      summary: 'The ' + scope.label + ' is invalid',
+      msg: 'Enter a valid ' + scope.label
+    };
+
+    if (scope.config && scope.config.errors && scope.config.errors[err]) {
+      if (scope.config.errors[err].summary) {
+        errorObj.summary = scope.config.errors[err].summary;
+      }
+
+      if (scope.config.errors[err].msg) {
+        errorObj.msg = scope.config.errors[err].msg;
+      }
+    }
+
+    return errorObj;
+  };
+
+  this.getStandardTextDirective = function (conf) {
+    return {
+      restrict: 'E',
+      require: '^^hodForm',
+      scope: {
+        field:    '=?',
+        hint:     '@hint',
+        name:     '@name',
+        id:       '@id',
+        label:    '@label',
+        config:   '=?'
+      },
+      transclude: true,
+      templateUrl: 'modules/forms/forms-text.html',
+      compile: function(element, attrs) {
+        defaultAttrs(attrs, {name: '', id: '', hint: '', label: ''});
+        return function(scope, element, attrs, formCtrl) {
+          scope.required = (attrs.required === 'false') ? false: true;
+          scope.type = conf.type;
+          scope.displayError = '';
+          if (!scope.config) {
+            scope.config = {};
+          }
+
+          if (scope.config.max) {
+            attrs.$set('max', scope.config.max);
+          };
+
+          // set the default configs
+          scope.config = angular.merge({
+            errors: {
+              required: {
+                msg: 'Required',
+                summary: attrs.label + ' is required'
+              },
+              numeric: {
+                msg: 'Not numeric',
+                summary: attrs.label + ' is not numeric'
+              },
+              max: {
+                msg: 'Exceeds the maximum',
+                summary: attrs.label + ' exceeds the maximum'
+              }
+            },
+            classes: {
+              'form-control-1-4': true
+            },
+            prefix: '',
+            suffix: '',
+          }, scope.config);
+
+          // register this component with the form controller
+          formCtrl.addObj(scope);
+
+          // set the maxlength
+          scope.maxlength = (attrs.max) ? attrs.max.length : '';
+
+          scope.getInput = function () {
+            return formCtrl.getForm()[attrs.name];
+          };
+
+          scope.validfunc = function (val) {
+            var validate = function () {
+
+              if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
+                // it is required (do this test before val is still a string)
+                return me.getError('required', scope);
+              }
+
+              if (scope.type === 'number') {
+                // only apply these tests if its a number type
+                val = Number(val);
+                if (_.isNaN(val)) {
+                  // not a number
+                  return me.getError('numeric', scope);
+                }
+
+                if (attrs.max && val > Number(attrs.max)) {
+                  // is it greater than the max
+                  return me.getError('max', scope);
+                }
+              }
+
+              return true;
+            };
+
+            var result = validate();
+            if (result === true) {
+              scope.error = {code: '', summary: '', msg: ''};
+              return true;
+            }
+
+            scope.error = result;
+            return false;
+          };
+        };
+      },
+    };
+  };
+
   return this;
 }]);
 
+
+/**
+  * A directive for the overall hod-form tag
+*/
 formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($anchorScroll, FormsService) {
   return {
     restrict: 'E',
@@ -88,19 +235,24 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             obj.displayError = '';
           } else {
             // show the message within the component
-            obj.displayError = obj.errorMsg
+            obj.displayError = obj.error.msg
 
             switch (obj.type) {
               case 'text':
               case 'number':
                 a = obj.id + '-input';
                 break;
+
               case 'date':
                 a = obj.id + '-day'
+                break;
+
+              default:
+                a = obj.id + '-0';
             }
 
             // add the error to the list of summary errors for the top of the page
-            errorList.push({ id: obj.id, msg: obj.errorSummary, code: obj.errorCode, anchor: a});
+            errorList.push({ id: obj.id, msg: obj.error.summary, code: obj.error.errorCode, anchor: a});
           }
         });
 
@@ -140,135 +292,17 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 }]);
 
 
-var getStandardTextDirective = function (conf) {
-  return {
-    restrict: 'E',
-    require: '^^hodForm',
-    scope: {
-      field:    '=?',
-      hint:     '@hint',
-      name:     '@name',
-      id:       '@id',
-      label:    '@label',
-      config:   '=?'
-    },
-    transclude: true,
-    templateUrl: 'modules/forms/forms-text.html',
-    compile: function(element, attrs) {
-      defaultAttrs(attrs, {name: '', id: '', hint: '', label: ''});
-      return function(scope, element, attrs, formCtrl) {
-        scope.required = (attrs.required === 'false') ? false: true;
-
-        scope.type = conf.type;
-        scope.displayError = '';
-        if (!scope.config) {
-          scope.config = {};
-        }
-
-        if (scope.config.max) {
-          attrs.$set('max', scope.config.max);
-        };
-
-        // set the default configs
-        scope.config = angular.merge({
-          errors: {
-            required: {
-              msg: 'Required',
-              summary: attrs.label + ' is required'
-            },
-            numeric: {
-              msg: 'Not numeric',
-              summary: attrs.label + ' is not numeric'
-            },
-            max: {
-              msg: 'Exceeds the maximum',
-              summary: attrs.label + ' exceeds the maximum'
-            }
-          }
-        }, scope.config);
-
-        // register this component with the form controller
-        formCtrl.addObj(scope);
-
-        // set the maxlength
-        scope.maxlength = (attrs.max) ? attrs.max.length : '';
-
-        scope.getInput = function () {
-          return formCtrl.getForm()[attrs.name];
-        };
-
-        scope.validfunc = function (val) {
-          var validate = function () {
-
-            if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
-              // it is required (do this test before val is still a string)
-              return {
-                err: 'required',
-                summary: scope.config.errors.required.summary,
-                msg: scope.config.errors.required.msg
-              };
-            }
-
-            if (scope.type === 'number') {
-              // only apply these tests if its a number type
-              val = Number(val);
-              if (_.isNaN(val)) {
-                // not a number
-                return {
-                  err: 'numeric',
-                  summary: scope.config.errors.numeric.summary,
-                  msg: scope.config.errors.numeric.msg
-                };
-              }
-
-              if (attrs.max && val > Number(attrs.max)) {
-                // is it greater than the max
-                return {
-                  err: 'max',
-                  summary: scope.config.errors.max.summary,
-                  msg: scope.config.errors.max.msg
-                };
-              }
-            }
-
-            return true;
-          };
-
-          var result = validate();
-          if (result === true) {
-            scope.errorCode = null;
-            scope.errorMsg = '';
-            scope.errorSummary = '';
-            return true;
-          }
-
-          scope.errorCode = result.err;
-          scope.errorMsg = result.msg;
-          scope.errorSummary = result.summary;
-          return false;
-        };
-
-
-        // scope.showErrors = function () {
-        //   return (formCtrl.getScope().showErrors && scope.errorMsg) ? true: false;
-        // };
-      };
-    },
-  };
-};
-
-
-formsModule.directive('hodText', [function () {
-  return getStandardTextDirective({type: 'text'});
+formsModule.directive('hodText', ['FormsService', function (FormsService) {
+  return FormsService.getStandardTextDirective({type: 'text'});
 }]);
 
 
-formsModule.directive('hodNumber', [function () {
-  return getStandardTextDirective({type: 'number'});
+formsModule.directive('hodNumber', ['FormsService', function (FormsService) {
+  return FormsService.getStandardTextDirective({type: 'number'});
 }]);
 
 
-formsModule.directive('hodRadio', [function () {
+formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
   return {
     restrict: 'E',
     require: '^^hodForm',
@@ -279,7 +313,6 @@ formsModule.directive('hodRadio', [function () {
       id: '@id',
       label: '@label',
       options: '=',
-      // required: '@?',
       config: '=?'
     },
     transclude: true,
@@ -321,11 +354,7 @@ formsModule.directive('hodRadio', [function () {
           var validate = function () {
             if (scope.config.required && _.isUndefined(selected)) {
               // it is required (do this test before val is still a string)
-              return {
-                err: 'required',
-                summary: scope.config.errors.required.summary,
-                msg: scope.config.errors.required.msg
-              };
+              return FormsService.getError('required', scope);
             }
 
             return true;
@@ -333,15 +362,11 @@ formsModule.directive('hodRadio', [function () {
 
           var result = validate();
           if (result === true) {
-            scope.errorCode = null;
-            scope.errorMsg = '';
-            scope.errorSummary = '';
+            scope.error = {code: '', summary: '', msg: ''};
             return true;
           }
 
-          scope.errorCode = result.err;
-          scope.errorMsg = result.msg;
-          scope.errorSummary = result.summary;
+          scope.error = result;
           return false;
         };
 
@@ -360,7 +385,7 @@ formsModule.directive('hodRadio', [function () {
 }]);
 
 
-formsModule.directive('hodDate', [function () {
+formsModule.directive('hodDate', ['FormsService', function (FormsService) {
   return {
     restrict: 'E',
     require: '^^hodForm',
@@ -387,6 +412,7 @@ formsModule.directive('hodDate', [function () {
 
         if (typeof attrs.required === 'string') {
           scope.config.required = (attrs.required === 'false') ? false: true;
+          console.log(scope.config);
         }
 
         // set the default configs
@@ -400,6 +426,14 @@ formsModule.directive('hodDate', [function () {
             },
             invalid: {
               msg: 'Invalid',
+              summary: attrs.label + ' is invalid'
+            },
+            max: {
+              msg: 'Date is after the max date',
+              summary: attrs.label + ' is invalid'
+            },
+            min: {
+              msg: 'Date is before the min date',
               summary: attrs.label + ' is invalid'
             }
           }
@@ -432,17 +466,12 @@ formsModule.directive('hodDate', [function () {
         };
 
         scope.data = scope.getData(scope.field);
-        console.log('Date', scope.getData(scope.field));
 
 
         scope.dateChanged = function () {
+          var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
+          scope.field = mom.format('YYYY-MM-DD');
           scope.validfunc();
-
-          var d = scope.data.year;
-          var before = scope.field;
-          d += '-' + ((Number(scope.data.month) < 10) ? '0' + Number(scope.data.month) : scope.data.month);
-          d += '-' + ((Number(scope.data.day) < 10) ? '0' + Number(scope.data.day) : scope.data.day);
-          scope.field = d;
         };
 
         scope.isValid = function () {
@@ -452,22 +481,40 @@ formsModule.directive('hodDate', [function () {
           return (validDay && validMonth && validYear);
         };
 
+        scope.isBlank = function () {
+          return ((scope.data.day + '' + scope.data.month + '' + scope.data.year).length === 0) ? true : false;
+        };
+
         scope.validfunc = function () {
           var validate = function () {
-            if (scope.config.required && (scope.data.day + '' + scope.data.month + '' + scope.data.year).length === 0) {
-              return {
-                err: 'required',
-                summary: scope.config.errors.required.summary,
-                msg: scope.config.errors.required.msg
-              };
+            if (scope.isBlank()) {
+              if (scope.config.required) {
+                // field is blank but is required
+                return FormsService.getError('required', scope);
+              } else {
+                // field is blank but this is not a required field
+                return true;
+              }
             }
 
-            if (!scope.isValid()) {
-              return {
-                err: 'invalid',
-                summary: scope.config.errors.invalid.summary,
-                msg: scope.config.errors.invalid.msg
-              };
+            if (!scope.isValid(scope.field)) {
+              return FormsService.getError('invalid', scope);
+            }
+
+            if (scope.config.max) {
+              var maxDate = moment(scope.field, 'YYYY-MM-DD');
+              var inputDate = moment(scope.config.max, 'YYYY-MM-DD');
+              if (inputDate.isBefore(maxDate)) {
+                return FormsService.getError('max', scope);
+              }
+            }
+
+            if (scope.config.min) {
+              var minDate = moment(scope.field, 'YYYY-MM-DD');
+              var inputDate = moment(scope.config.min, 'YYYY-MM-DD');
+              if (inputDate.isAfter(minDate)) {
+                return FormsService.getError('min', scope);
+              }
             }
 
             return true;
@@ -475,86 +522,144 @@ formsModule.directive('hodDate', [function () {
 
           var result = validate();
           if (result === true) {
-            scope.errorCode = null;
-            scope.errorMsg = '';
-            scope.errorSummary = '';
+            scope.error = {code: '', summary: '', msg: ''};
             scope.getInput().$setValidity('date', true);
             return true;
           }
-
           scope.getInput().$setValidity('date', false);
-          scope.errorCode = result.err;
-          scope.errorMsg = result.msg;
-          scope.errorSummary = result.summary;
+          scope.error = result;
           return false;
         };
 
         scope.validfunc();
       };
     },
-
   }
 }]);
 
 
-formsModule.directive('hodSortCode', [function () {
+formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
   return {
     restrict: 'E',
     require: '^^hodForm',
-    compile: function(element, attrs) {
-      defaultAttrs(attrs, {hint: '', label: '', required: true, errorInline: 'Enter a valid sort code', error: 'The sort code is invalid'});
-
-      return function(scope, element, attrs, formCtrl) {
-        scope.type = 'sortcode';
-        formCtrl.addObj(scope);
-        scope.data = {part1: '', part2: '', part3: ''};
-
-        if (scope.field.length >= 2) {
-          scope.data.part1 = scope.field.substr(0, 2);
-        }
-
-        if (scope.field.length >= 4) {
-          scope.data.part2 = scope.field.substr(2, 2);
-        }
-
-        if (scope.field.length === 6) {
-          scope.data.part3 = scope.field.substr(4, 2);
-        }
-
-        scope.itChanged = function () {
-          scope.field = scope.data.part1 + '' + scope.data.part2 + '' + scope.data.part3;
-          scope.ok = scope.isValid();
-          // formCtrl.updateErrors();
-        };
-
-        scope.isValid = function () {
-          var pt1 = (!_.isNaN(Number(scope.data.part1)) && scope.data.part1.length === 2);
-          var pt2 = (!_.isNaN(Number(scope.data.part2)) && scope.data.part2.length === 2);
-          var pt3 = (!_.isNaN(Number(scope.data.part3)) && scope.data.part3.length === 2);
-
-          return (pt1 && pt2 && pt3) ? true : false;
-        };
-
-        scope.showErrors = function () {
-          return (formCtrl.getScope().showErrors() && !scope.ok) ? true: false;
-        };
-
-        scope.itChanged();
-      };
-    },
+    transclude: true,
+    templateUrl: 'modules/forms/forms-sortcode.html',
     scope: {
       field: '=',
       hint: '@hint',
       name: '@name',
       id: '@id',
       label: '@label',
-      validFunc: '=',
-      error: '@error',
-      errorInline: '@errorInline',
-      required: '@required'
+      config: '=?'
     },
-    transclude: true,
-    templateUrl: 'modules/forms/forms-sortcode.html'
+    compile: function(element, attrs) {
+      defaultAttrs(attrs, {hint: '', label: '', required: true, errorInline: 'Enter a valid sort code', error: 'The sort code is invalid'});
+
+      return function(scope, element, attrs, formCtrl) {
+        scope.type = 'sortcode';
+        scope.displayError = '';
+
+        if (!scope.config) {
+          scope.config = {};
+        }
+
+        if (typeof attrs.required === 'string') {
+          scope.config.required = (attrs.required === 'false') ? false: true;
+        }
+
+        // set the default configs
+        scope.config = angular.merge({
+          inline: false,
+          required: true,
+          errors: {
+            required: {
+              msg: 'Required',
+              summary: attrs.label + ' is required'
+            },
+            invalid: {
+              msg: 'Invalid',
+              summary: attrs.label + ' is invalid'
+            }
+          }
+        }, scope.config);
+
+        //
+        formCtrl.addObj(scope);
+
+        scope.getInput = function () {
+          return formCtrl.getForm()[attrs.name + '-part1'];
+        };
+
+        scope.getData = function (input) {
+          var data = {};
+          if (typeof input === 'string') {
+            data.part1 = input.substr(0,2);
+            data.part2 = input.substr(2,2);
+            data.part3 = input.substr(4,2);
+          }
+
+          return data;
+        };
+
+        scope.data = scope.getData(scope.field);
+
+        scope.itChanged = function () {
+          var str = scope.data.part1 + '' + scope.data.part2 + '' + scope.data.part3;
+          scope.field = str;
+          scope.validfunc();
+        };
+
+        scope.isValid = function () {
+          var pt1 = Number(scope.data.part1);
+          var pt2 = Number(scope.data.part2);
+          var pt3 = Number(scope.data.part3);
+
+          if (scope.field.length !== 6) {
+            return false;
+          }
+
+          return ((pt1 > 0 && pt1 <= 99) &&
+                  (pt2 > 0 && pt2 <= 99) &&
+                  (pt3 > 0 && pt3 <= 99)) ? true : false;
+        };
+
+        scope.isBlank = function () {
+          return (scope.field.length === 0) ? true : false;
+        };
+
+        scope.validfunc = function () {
+          var validate = function () {
+            if (scope.isBlank()) {
+              if (scope.config.required) {
+                // field is blank but is required
+                return FormsService.getError('required', scope);
+              } else {
+                // field is blank but this is not a required field
+                return true;
+              }
+            }
+
+            if (!scope.isValid(scope.field)) {
+              return FormsService.getError('invalid', scope);
+            }
+
+            return true;
+          };
+
+          var result = validate();
+          if (result === true) {
+            scope.error = {code: '', summary: '', msg: ''};
+            scope.getInput().$setValidity('sortcode', true);
+            return true;
+          }
+          scope.getInput().$setValidity('sortcode', false);
+          scope.error = result;
+          return false;
+        };
+
+        scope.validfunc();
+      }
+    }
   }
 }]);
 
@@ -571,7 +676,7 @@ formsModule.directive('hodSubmit', [function () {
         scope.type = 'submit';
         var formEl = formCtrl.getForm();
         scope.disable = function () {
-          // return formEl.$invalid;
+
         }
       };
     },
@@ -581,4 +686,3 @@ formsModule.directive('hodSubmit', [function () {
     templateUrl: 'modules/forms/forms-submit.html'
   }
 }]);
-
