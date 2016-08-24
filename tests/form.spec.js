@@ -40,7 +40,7 @@ describe('HOD Forms:', function () {
 
     describe('Object property binding via the field attribute', function () {
       var el = element(by.id('surname'));
-      var inp = el.element(by.tagName('input'));
+      var inp = element(by.id('surname-input'));
       var feedback = element(by.id('surnameFeedback')).element(by.tagName('span'));
 
 
@@ -51,8 +51,8 @@ describe('HOD Forms:', function () {
 
 
       it('should alter the bound object property value when input text changes', function () {
-        inp.click();
         inp.sendKeys(' Craigen');
+        // browser.sleep(6000);
         expect(inp.getAttribute('value')).toEqual('Stuart Craigen');
         expect(feedback.getText()).toEqual('Stuart Craigen');
       });
@@ -218,8 +218,8 @@ describe('HOD Forms:', function () {
       });
 
       it('should be reporting that the start date is required', function () {
-        expect(element(by.id('error-summary-list')).all(by.tagName('li')).first().getText()).toEqual('Start date is required');
-        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Required');
+        expect(element(by.id('error-summary-list')).all(by.tagName('li')).first().getText()).toEqual('The start date is invalid');
+        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Enter a valid start date');
       });
 
       it('should report that dates are invalid', function () {
@@ -231,8 +231,8 @@ describe('HOD Forms:', function () {
 
         submit.click();
 
-        expect(element(by.id('error-summary-list')).all(by.tagName('li')).get(0).getText()).toEqual('Start date is invalid');
-        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Invalid');
+        expect(element(by.id('error-summary-list')).all(by.tagName('li')).get(0).getText()).toEqual('The start date is invalid');
+        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Enter a valid start date');
       });
 
       it('should display custom error messages', function () {

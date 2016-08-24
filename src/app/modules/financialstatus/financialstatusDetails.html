@@ -1,6 +1,6 @@
 <div class="column-full-width ng-scope">
   <div id="page1">
-    <h1 class="heading-large" id="pageTitle" tabindex="-1"><span id="pageSubHeading">{{ selectedType.label }}</span></h1>
+    <h1 class="heading-large" id="pageTitle" tabindex="-1"><span id="pageSubHeading">{{ pageTitle }}</span></h1>
 
     <hod-form name="finStatusDetails">
 
@@ -8,15 +8,15 @@
 
       <hod-radio label="In London?" field="finStatus.innerLondonBorough" options="yesNoOptions" config="conf.london"></hod-radio>
 
-      <hod-date label="Course start date" field="finStatus.courseStartDate"></hod-date>
+      <hod-date label="Course start date" field="finStatus.courseStartDate" config="conf.courseStartDate"></hod-date>
 
-      <hod-date label="Course end date" field="finStatus.courseEndDate"></hod-date>
+      <hod-date label="Course end date" field="finStatus.courseEndDate" config="conf.courseEndDate"></hod-date>
 
-      <hod-number label="Total tuition fees for the first year" field="finStatus.totalTuitionFees" hint="For example, £9000"></hod-number>
+      <hod-number label="Total tuition fees for the first year" field="finStatus.totalTuitionFees" hint="For example, £9000" config="conf.totalTuitionFees"></hod-number>
 
-      <hod-number label="Total tuition fees already paid" field="finStatus.tuitionFeesAlreadyPaid" hint="For example, £3000"></hod-number>
+      <hod-number label="Tuition fees already paid" field="finStatus.tuitionFeesAlreadyPaid" hint="For example, £3000" config="conf.tuitionFeesAlreadyPaid"></hod-number>
 
-      <hod-number label="Accommodation fees already paid" field="finStatus.accommodationFeesAlready"></hod-number>
+      <hod-number label="Accommodation fees already paid" field="finStatus.accommodationFeesAlreadyPaid" config="conf.accommodationFeesAlreadyPaid"></hod-number>
 
       <hod-number label="Number of dependants" field="finStatus.numberOfDependants" config="conf.numberOfDependants"></hod-number>
 

@@ -48,11 +48,15 @@ var getInputName = function (attrs) {
   return 'input' + nameIndexCounter++;
 };
 
+var lcFirst = function (str) {
+  return str.substr(0, 1).toLowerCase() + str.substr(1);
+};
+
 
 /**
   * create the FormsService static to handle global form functions
 */
-formsModule.factory('FormsService', [function () {
+formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
   var register = {};
   var me = this;
   this.registerForm = function (f) {
@@ -60,14 +64,22 @@ formsModule.factory('FormsService', [function () {
     register[id] = f;
   };
 
+  /**
+    * look at the scope and configuration of a specific element
+    * if it has specific error messages defined for that element
+    * then return them otherwise return a default message
+  */
   this.getError = function (err, scope) {
+    // default errors
     var errorObj = {
       err: err,
-      summary: 'The ' + scope.label + ' is invalid',
-      msg: 'Enter a valid ' + scope.label
+      summary: 'The ' + lcFirst(scope.label) + ' is invalid',
+      msg: 'Enter a valid ' + lcFirst(scope.label)
     };
 
+
     if (scope.config && scope.config.errors && scope.config.errors[err]) {
+      // are any specific messages supplied for the summary or msg
       if (scope.config.errors[err].summary) {
         errorObj.summary = scope.config.errors[err].summary;
       }
@@ -80,6 +92,10 @@ formsModule.factory('FormsService', [function () {
     return errorObj;
   };
 
+  /**
+    * element directives hod-text and hod-number share 99% of the same code
+    * so define everything here and both directives can use it
+  */
   this.getStandardTextDirective = function (conf) {
     return {
       restrict: 'E',
@@ -110,11 +126,8 @@ formsModule.factory('FormsService', [function () {
 
           // set the default configs
           scope.config = angular.merge({
+            hidden: false,
             errors: {
-              required: {
-                msg: 'Required',
-                summary: attrs.label + ' is required'
-              },
               numeric: {
                 msg: 'Not numeric',
                 summary: attrs.label + ' is not numeric'
@@ -142,6 +155,7 @@ formsModule.factory('FormsService', [function () {
           };
 
           scope.validfunc = function (val) {
+
             var validate = function () {
 
               if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
@@ -162,11 +176,12 @@ formsModule.factory('FormsService', [function () {
                   return me.getError('max', scope);
                 }
               }
-
+              // console.log('validfunc', scope.name, val);
               return true;
             };
 
             var result = validate();
+            $rootScope.$applyAsync();
             if (result === true) {
               scope.error = {code: '', summary: '', msg: ''};
               return true;
@@ -175,6 +190,8 @@ formsModule.factory('FormsService', [function () {
             scope.error = result;
             return false;
           };
+
+          // scope.validfunc();
         };
       },
     };
@@ -229,9 +246,15 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
         // check each component of the form
         _.each(objs, function (obj) {
+          if (obj.config.hidden) {
+            // console.log('HIDDEN', obj);
+            return;
+          }
+          // console.log(obj);
           var inp = obj.getInput();
           if (inp.$valid) {
             // clear the components error message
+            // console.log('VALID', obj.id);
             obj.displayError = '';
           } else {
             // show the message within the component
@@ -255,7 +278,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             errorList.push({ id: obj.id, msg: obj.error.summary, code: obj.error.errorCode, anchor: a});
           }
         });
-
+        // console.log(errorList);
         if (angular.toJson(errorList) !== angular.toJson($scope.errorList)) {
           $scope.errorList = errorList;
         }
@@ -264,7 +287,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
       $scope.errorClicked = function (anchor) {
         var e = angular.element(document.getElementById(anchor));
-        console.log('errorClicked', anchor, e);
+        // console.log('errorClicked', anchor, e);
         if (e[0]) {
           e[0].focus();
         }
@@ -332,12 +355,13 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
 
         // set the default configs
         scope.config = angular.merge({
+          hidden: false,
           inline: false,
           required: true,
           errors: {
             required: {
-              msg: 'Required',
-              summary: attrs.label + ' is required'
+              summary: 'The ' + lcFirst(scope.label) + ' option is invalid',
+              msg: 'Select an option'
             }
           }
         }, scope.config);
@@ -412,22 +436,15 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
 
         if (typeof attrs.required === 'string') {
           scope.config.required = (attrs.required === 'false') ? false: true;
-          console.log(scope.config);
+          // console.log(scope.config);
         }
 
         // set the default configs
         scope.config = angular.merge({
+          hidden: false,
           inline: false,
           required: true,
           errors: {
-            required: {
-              msg: 'Required',
-              summary: attrs.label + ' is required'
-            },
-            invalid: {
-              msg: 'Invalid',
-              summary: attrs.label + ' is invalid'
-            },
             max: {
               msg: 'Date is after the max date',
               summary: attrs.label + ' is invalid'
@@ -469,6 +486,9 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
 
 
         scope.dateChanged = function () {
+          if (scope.config.hidden) {
+            return;
+          }
           var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
           scope.field = mom.format('YYYY-MM-DD');
           scope.validfunc();
@@ -486,6 +506,9 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
         };
 
         scope.validfunc = function () {
+          if (scope.config.hidden) {
+            return true;
+          }
           var validate = function () {
             if (scope.isBlank()) {
               if (scope.config.required) {
@@ -521,6 +544,7 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
           };
 
           var result = validate();
+
           if (result === true) {
             scope.error = {code: '', summary: '', msg: ''};
             scope.getInput().$setValidity('date', true);
@@ -554,7 +578,6 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
     },
     compile: function(element, attrs) {
       defaultAttrs(attrs, {hint: '', label: '', required: true, errorInline: 'Enter a valid sort code', error: 'The sort code is invalid'});
-
       return function(scope, element, attrs, formCtrl) {
         scope.type = 'sortcode';
         scope.displayError = '';
@@ -569,17 +592,18 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
 
         // set the default configs
         scope.config = angular.merge({
+          hidden: false,
           inline: false,
           required: true,
           errors: {
-            required: {
-              msg: 'Required',
-              summary: attrs.label + ' is required'
-            },
-            invalid: {
-              msg: 'Invalid',
-              summary: attrs.label + ' is invalid'
-            }
+            // required: {
+            //   msg: 'Required',
+            //   summary: attrs.label + ' is required'
+            // },
+            // invalid: {
+            //   msg: 'Invalid',
+            //   summary: attrs.label + ' is invalid'
+            // }
           }
         }, scope.config);
 
@@ -628,6 +652,9 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
         };
 
         scope.validfunc = function () {
+          if (scope.config.hidden) {
+            return true;
+          }
           var validate = function () {
             if (scope.isBlank()) {
               if (scope.config.required) {
@@ -657,7 +684,9 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
           return false;
         };
 
-        scope.validfunc();
+        _.defer(function () {
+          scope.validfunc();
+        });
       }
     }
   }

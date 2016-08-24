@@ -66,11 +66,19 @@ financialstatusModule.factory('FinancialstatusService', [function () {
     return [
       {
         value: 'nondoctorate',
-        label:'Tier 4 (General) student',
+        label: 'Tier 4 (General) student',
       },
       {
         value: 'doctorate',
-        label:'Tier 4 (General) doctorate extension scheme'
+        label: 'Tier 4 (General) doctorate extension scheme)'
+      },
+      {
+        value: 'pgdd',
+        label: 'Tier 4 (General) student (postgraduate doctor or dentist)'
+      },
+      {
+        value: 'sso',
+        label: 'Tier 4 (General) student (sabbatical officer)'
       }
     ];
   };
@@ -103,9 +111,8 @@ financialstatusModule.controller(
 'FinancialstatusDetailsCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'FinancialstatusService', 'IOService', '$window', '$timeout',
 function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOService, $window, $timeout) {
 
-  var opt = _.findWhere(FinancialstatusService.getStudentTypes(), {value: $stateParams.studentType});
-  var showTuition = (opt.value !== 'doctorate');
-  if (!opt) {
+  var sType = _.findWhere(FinancialstatusService.getStudentTypes(), {value: $stateParams.studentType});
+  if (!sType) {
     // this is not a valid student type option - abort!
     $state.go('financialStatus');
     return;
@@ -113,16 +120,46 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
 
   $scope.conf = {
     toDate: {
-      stdErrors: {
-        inline: 'Date is invalid',
-        summary: 'The end date is invalid'
+      errors: {
+        required: {
+          msg: 'Enter a valid end date',
+          summary: 'The end date is invalid'
+        }
       },
       onChange: function (before, after) {
         console.log('onChange', before, after);
       },
     },
     london: {
-      inline: true
+      inline: true,
+      errors: {
+        required: {
+          summary: 'The in London option is invalid'
+        }
+      }
+    },
+    courseStartDate: {
+      hidden: (sType.value === 'doctorate') ? true : false,
+    },
+    courseEndDate: {
+      hidden: (sType.value === 'doctorate') ? true : false,
+    },
+    totalTuitionFees: {
+      hidden: (sType.value !== 'nondoctorate') ? true : false,
+      prefix: '£ ',
+      errors: {
+        required: {
+          summary: 'The total tuition fees is invalid',
+          msg: 'Enter a valid total tuition fees'
+        }
+      }
+    },
+    tuitionFeesAlreadyPaid: {
+      hidden: (sType.value !== 'nondoctorate') ? true : false,
+      prefix: '£ '
+    },
+    accommodationFeesAlreadyPaid: {
+      prefix: '£ '
     },
     numberOfDependants: {
       classes: { 'form-control-1-8': true }
@@ -133,29 +170,9 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
   };
 
   $scope.finStatus = FinancialstatusService.getDetails();
-  $scope.selectedType = opt;
-  $scope.showTuition = showTuition;
+  $scope.finStatus.studentType = sType.value;
   $scope.yesNoOptions = [{label: 'Yes', value: true}, {label: 'No', value: false}];
-
-  // $scope.v = {
-  //   toDate: function () {
-  //     console.log('validation toDate');
-  //     return true;
-  //   },
-  //   courseLength: function (value) {
-  //     return (Number(value) <= 9 && value.length) ? true: false;
-  //   },
-  //   accomPaid: function (value) {
-  //     return (Number(value) <= 1265) ? true: false;
-  //   },
-  //   int: function (value) {
-  //     var n = Number(value);
-  //     return (n === Math.floor(n) && n === Math.ceil(n)) ? true : false;
-  //   },
-  //   accountNumber: function (value) {
-  //     return (Number(value) >= 10000000) ? true : false;
-  //   }
-  // };
+  $scope.pageTitle = sType.label;
 
   $scope.validfunc = function (val) {
     return true;
@@ -167,10 +184,10 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
     var sortCode = details.sortCode;
     var accountNumber = details.accountNumber;
 
-    if (!showTuition) {
-      delete(details.totalTuitionFees);
-      delete(details.tuitionFeesAlreadyPaid);
-    }
+    // if (!showTuition) {
+    //   delete(details.totalTuitionFees);
+    //   delete(details.tuitionFeesAlreadyPaid);
+    // }
 
     delete details.sortCode;
     delete details.accountNumber;
