@@ -1,17 +1,20 @@
 {
-  "name": "financial-status-servie-ui",
+  "name": "pttg-angular",
   "version": "1.0.0",
-  "description": "financial status service ui",
+  "description": "HOD style form angular directives",
   "scripts": {
     "init": "npm install",
     "test": "protractor protractor.conf.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "angular": "^1.5.8",
+    "underscore": "^1.8.3",
+    "angular-ui-validate": "^1.2.2"
+  },
+  "devDependencies": {
     "angular-aria": "^1.5.8",
     "angular-mocks": "^1.5.8",
     "angular-ui-router": "^0.3.1",
-    "angular-ui-validate": "^1.2.2",
     "async": "^2.0.1",
     "chalk": "^1.1.1",
     "del": "^2.2.0",
@@ -54,7 +57,6 @@
     "require-dir": "^0.3.0",
     "run-sequence": "^1.2.2",
     "serve-static": "^1.11.1",
-    "underscore": "^1.8.3",
     "wiredep": "^2.2.2",
     "yargs": "^3.15.0"
   }

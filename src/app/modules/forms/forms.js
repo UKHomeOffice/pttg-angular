@@ -294,8 +294,9 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
       };
 
       $scope.submitForm = function () {
-        if (me.validateForm()) {
-          $scope.showErrors = true;
+        var isValid = (me.validateForm() === 0) ? true : false ;
+        if (isValid) {
+          $scope.showErrors = !isValid;
           $timeout(function () {
             var e = angular.element(document.querySelector('.error-summary'));
             if (e[0]) {
@@ -303,11 +304,11 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             }
           });
         } else {
-          $scope.showErrors = false;
+          $scope.showErrors = !isValid;
         }
 
         if ($scope.submit) {
-          $scope.submit();
+          $scope.submit(isValid, $scope, me);
         }
       };
     }],

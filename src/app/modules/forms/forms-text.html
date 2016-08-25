@@ -6,5 +6,4 @@
     <div ng-if="displayError" id="{{ id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
     {{ config.prefix }}<input id="{{ id }}-input" name="{{ name }}" class="form-control" ng-class="config.classes" type="text" ng-model="field" ui-validate="'validfunc($value)'" maxlength="{{ maxlength }}" />{{ config.suffix }}
   </div>
-  {{ field }}
 </fieldset>

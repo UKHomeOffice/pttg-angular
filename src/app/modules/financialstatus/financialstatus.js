@@ -4,6 +4,8 @@
 
 var financialstatusModule = angular.module('hod.financialstatus', ['ui.router']);
 
+
+// #### ROUTES #### //
 financialstatusModule.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
   // define a route for the question re student type
   $stateProvider.state({
@@ -174,15 +176,13 @@ function ($rootScope, $scope, $state, $stateParams, FinancialstatusService, IOSe
   $scope.yesNoOptions = [{label: 'Yes', value: true}, {label: 'No', value: false}];
   $scope.pageTitle = sType.label;
 
-  $scope.validfunc = function (val) {
-    return true;
-  }
-
-  $scope.detailsSubmit = function () {
+  $scope.detailsSubmit = function (isValid, formScope, formCtrl) {
     // make a copy of the finStatus object and delete fields we don't want to send
     var details = angular.copy(FinancialstatusService.getDetails());
     var sortCode = details.sortCode;
     var accountNumber = details.accountNumber;
+    // console.log('detailsSubmit', details, isValid, formScope);
+    return;
 
     // if (!showTuition) {
     //   delete(details.totalTuitionFees);
