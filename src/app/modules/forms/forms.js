@@ -41,6 +41,11 @@ var getInputName = function (attrs) {
   if (attrs.name) {
     return attrs.name;
   }
+
+  if (attrs.id) {
+    return attrs.id;
+  }
+
   if (attrs.label) {
     var n = attrs.label.replace(/[^a-zA-Z]/g, '').toLowerCase() + nameIndexCounter++;
     return n;
