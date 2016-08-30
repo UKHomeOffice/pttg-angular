@@ -1,9 +1,9 @@
-<fieldset ng-hide="config.hidden">
+<fieldset ng-hide="config.hidden" id="{{ config.id }}-wrapper">
   <legend class="visually-hidden">{{ label }}</legend>
   <div class="form-group" ng-class="{error: displayError}">
-    <label class="form-label-bold {{ type }}" for="{{ id }}-input">{{ label }}</label>
+    <label class="form-label-bold {{ type }}" for="{{ config.id }}">{{ label }}</label>
     <div class="form-hint">{{ hint }}</div>
-    <div ng-if="displayError" id="{{ id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
-    {{ config.prefix }}<input id="{{ id }}-input" name="{{ name }}" class="form-control" ng-class="config.classes" type="text" ng-model="field" ui-validate="'validfunc($value)'" maxlength="{{ maxlength }}" />{{ config.suffix }}
+    <div ng-if="displayError" id="{{ config.id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
+    {{ config.prefix }}<input id="{{ config.id }}" name="{{ name }}" class="form-control" ng-class="config.classes" type="text" ng-model="field" ui-validate="'validfunc($value)'" maxlength="{{ maxlength }}" />{{ config.suffix }}
   </div>
 </fieldset>

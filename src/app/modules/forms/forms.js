@@ -20,10 +20,10 @@ var defaultAttrs = function (attrs, defaults) {
     attrs.$set('name', getInputName(attrs));
   }
 
-  // force an ID
-  if (!attrs['id']) {
-    attrs.$set('id', attrs.name);
-  }
+  // // force an ID
+  // if (!attrs['id']) {
+  //   attrs.$set('id', attrs.name);
+  // }
 };
 
 
@@ -40,10 +40,6 @@ var nameIndexCounter = 0;
 var getInputName = function (attrs) {
   if (attrs.name) {
     return attrs.name;
-  }
-
-  if (attrs.id) {
-    return attrs.id;
   }
 
   if (attrs.label) {
@@ -116,7 +112,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
       transclude: true,
       templateUrl: 'modules/forms/forms-text.html',
       compile: function(element, attrs) {
-        defaultAttrs(attrs, {name: '', id: '', hint: '', label: ''});
+        defaultAttrs(attrs, {name: '', hint: '', label: ''});
         return function(scope, element, attrs, formCtrl) {
           scope.required = (attrs.required === 'false') ? false: true;
           scope.type = conf.type;
@@ -131,6 +127,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
 
           // set the default configs
           scope.config = angular.merge({
+            id: attrs.name,
             hidden: false,
             errors: {
               numeric: {
@@ -251,15 +248,15 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
         // check each component of the form
         _.each(objs, function (obj) {
+          console.log(obj);
           if (obj.config.hidden) {
-            // console.log('HIDDEN', obj);
             return;
           }
           // console.log(obj);
           var inp = obj.getInput();
           if (inp.$valid) {
             // clear the components error message
-            // console.log('VALID', obj.id);
+            console.log('VALID', obj.config.id);
             obj.displayError = '';
           } else {
             // show the message within the component
@@ -268,15 +265,19 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             switch (obj.type) {
               case 'text':
               case 'number':
-                a = obj.id + '-input';
+                a = obj.config.id;
                 break;
 
               case 'date':
-                a = obj.id + '-day'
+                a = obj.config.id + 'Day';
+                break;
+
+              case 'sortcode':
+                a = obj.config.id + 'Part1';
                 break;
 
               default:
-                a = obj.id + '-0';
+                a = obj.config.id + '0';
             }
 
             // add the error to the list of summary errors for the top of the page
@@ -339,7 +340,6 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
       field: '=',
       hint: '@hint',
       name: '@name',
-      id: '@id',
       label: '@label',
       options: '=',
       config: '=?'
@@ -361,6 +361,7 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
 
         // set the default configs
         scope.config = angular.merge({
+          id: attrs.name,
           hidden: false,
           inline: false,
           required: true,
@@ -423,7 +424,6 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
       field: '=',
       hint: '@hint',
       name: '@name',
-      id: '@id',
       label: '@label',
       config: '=?'
     },
@@ -447,6 +447,7 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
 
         // set the default configs
         scope.config = angular.merge({
+          id: attrs.name,
           hidden: false,
           inline: false,
           required: true,
@@ -461,6 +462,8 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
             }
           }
         }, scope.config);
+
+        console.log('Date', scope.config.id);
 
         //
         formCtrl.addObj(scope);
@@ -578,12 +581,11 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
       field: '=',
       hint: '@hint',
       name: '@name',
-      id: '@id',
       label: '@label',
       config: '=?'
     },
     compile: function(element, attrs) {
-      defaultAttrs(attrs, {hint: '', label: '', required: true, errorInline: 'Enter a valid sort code', error: 'The sort code is invalid'});
+      defaultAttrs(attrs, {hint: '', label: '', required: true});
       return function(scope, element, attrs, formCtrl) {
         scope.type = 'sortcode';
         scope.displayError = '';
@@ -598,6 +600,7 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
 
         // set the default configs
         scope.config = angular.merge({
+          id: attrs.name,
           hidden: false,
           inline: false,
           required: true,
@@ -617,7 +620,7 @@ formsModule.directive('hodSortcode', ['FormsService', function (FormsService) {
         formCtrl.addObj(scope);
 
         scope.getInput = function () {
-          return formCtrl.getForm()[attrs.name + '-part1'];
+          return formCtrl.getForm()[attrs.name + 'Part1'];
         };
 
         scope.getData = function (input) {

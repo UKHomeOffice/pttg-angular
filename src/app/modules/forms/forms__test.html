@@ -9,10 +9,10 @@
     <hod-text label="This is my first test"></hod-text>
 
     <!-- test basics -->
-    <hod-text label="Forename" name="forename" id="forename_id" hint="Let me give you a clue" required="false"></hod-text>
+    <hod-text label="Forename" name="forename" hint="Let me give you a clue" required="false" config="confForename"></hod-text>
 
 
-    <hod-text label="Surname" name="surname" hint="What is your name" field="values.surname" config="confSurname"></hod-text>
+    <hod-text id="surnameTest" label="Surname" name="surname" hint="What is your name" field="values.surname" config="confSurname"></hod-text>
     <p id="surnameFeedback">values.surname: <span>{{ values.surname }}</span></p>
 
     <hod-number label="A number" name="numTest" hint="Enter a number" field="values.n"></hod-number>

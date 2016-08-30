@@ -73,6 +73,10 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     { value: 'no', label:'No' }
   ];
 
+  $scope.confForename = {
+    id: 'specficIDcanBeGiven'
+  };
+
   $scope.confSurname = {
     errors: {
       required: {
