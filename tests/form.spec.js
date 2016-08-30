@@ -52,7 +52,6 @@ describe('HOD Forms:', function () {
 
       it('should alter the bound object property value when input text changes', function () {
         inp.sendKeys(' Craigen');
-        // browser.sleep(6000);
         expect(inp.getAttribute('value')).toEqual('Stuart Craigen');
         expect(feedback.getText()).toEqual('Stuart Craigen');
       });
@@ -224,10 +223,10 @@ describe('HOD Forms:', function () {
 
       it('should report that dates are invalid', function () {
         // make the start date invalid rather than blank
-        element(by.id('startdate0-day')).sendKeys('13');
+        element(by.id('startdate0Day')).sendKeys('13');
 
         // blank the year on the end date
-        element(by.id('enddate1-year')).sendKeys(protractor.Key.BACK_SPACE);
+        element(by.id('enddate1Year')).sendKeys(protractor.Key.BACK_SPACE);
 
         submit.click();
 
@@ -238,14 +237,13 @@ describe('HOD Forms:', function () {
       it('should display custom error messages', function () {
         expect(element(by.id('error-summary-list')).all(by.tagName('li')).get(1).getText()).toEqual('The end date is unacceptable');
         expect(element(by.id('enddate1-error-message')).getText()).toEqual('No good');
-        // browser.sleep(6000);
       });
 
       it('should remove all errors when dates are once again correct', function () {
-        element(by.id('startdate0-day')).sendKeys('13');
-        element(by.id('startdate0-month')).sendKeys('5');
-        element(by.id('startdate0-year')).sendKeys('1974');
-        element(by.id('enddate1-year')).sendKeys('4');
+        element(by.id('startdate0Day')).sendKeys('13');
+        element(by.id('startdate0Month')).sendKeys('5');
+        element(by.id('startdate0Year')).sendKeys('1974');
+        element(by.id('enddate1Year')).sendKeys('4');
 
         submit.click();
         expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
@@ -263,9 +261,9 @@ describe('HOD Forms:', function () {
     describe('Max date', function () {
 
       var dobElement = element(by.id('dob'));
-      var dobDay = element(by.id('dob-day'));
-      var dobMonth = element(by.id('dob-month'));
-      var dobYear = element(by.id('dob-year'));
+      var dobDay = element(by.id('dobDay'));
+      var dobMonth = element(by.id('dobMonth'));
+      var dobYear = element(by.id('dobYear'));
 
       describe('Date entered is after (greater than) the maximum date', function () {
         it('should fail if Date 1 day greater', function () {
@@ -347,9 +345,9 @@ describe('HOD Forms:', function () {
     describe('Min date', function () {
 
       var dobElement = element(by.id('dob'));
-      var dobDay = element(by.id('dob-day'));
-      var dobMonth = element(by.id('dob-month'));
-      var dobYear = element(by.id('dob-year'));
+      var dobDay = element(by.id('dobDay'));
+      var dobMonth = element(by.id('dobMonth'));
+      var dobYear = element(by.id('dobYear'));
 
       describe('Date entered is before (less than) the minimum date', function () {
         it('should fail if Date 1 day before', function () {

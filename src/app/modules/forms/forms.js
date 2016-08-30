@@ -466,7 +466,7 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
         formCtrl.addObj(scope);
 
         scope.getInput = function () {
-          return formCtrl.getForm()[attrs.name + '-year'];
+          return formCtrl.getForm()[attrs.name + 'Year'];
         };
 
         scope.getData = function (input) {

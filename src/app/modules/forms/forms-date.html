@@ -6,18 +6,18 @@
       <div ng-if="displayError" id="{{ id }}-error-message" class="form-error validation-message">{{ displayError }}</div>
 
       <div class="form-group form-group-day">
-        <label for="{{ name }}-day">Day</label>
-        <input class="form-control" name="{{ name }}-day" id="{{ name }}-day" type="text" ng-model="data.day" ng-change="dateChanged()" autocomplete="off" maxlength="2" />
+        <label for="{{ name }}Day">Day</label>
+        <input class="form-control" name="{{ name }}Day" id="{{ name }}Day" type="text" ng-model="data.day" ng-change="dateChanged()" autocomplete="off" maxlength="2" />
       </div>
 
       <div class="form-group form-group-month">
-        <label for="{{ name }}-month">Month</label>
-        <input class="form-control" name="{{ name }}-month" id="{{ name }}-month" type="text" ng-model="data.month" ng-change="dateChanged()" autocomplete="off" maxlength="2" />
+        <label for="{{ name }}Month">Month</label>
+        <input class="form-control" name="{{ name }}Month" id="{{ name }}Month" type="text" ng-model="data.month" ng-change="dateChanged()" autocomplete="off" maxlength="2" />
       </div>
 
       <div class="form-group form-group-year">
-        <label for="{{ name }}-year">Year</label>
-        <input class="form-control" name="{{ name }}-year" id="{{ name }}-year" type="text" ng-model="data.year" ng-change="dateChanged()" autocomplete="off" maxlength="4" />
+        <label for="{{ name }}Year">Year</label>
+        <input class="form-control" name="{{ name }}Year" id="{{ name }}Year" type="text" ng-model="data.year" ng-change="dateChanged()" autocomplete="off" maxlength="4" />
       </div>
     </div>
   </fieldset>
