@@ -21,7 +21,7 @@ describe('Sortcode', function () {
   it ('should respect the required attribute', function () {
     // no errors should be present at this point
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeFalsy();
     expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
 
     // blank sortcode1 which is required sortcode2 is not
@@ -30,7 +30,7 @@ describe('Sortcode', function () {
     sortcodePt3.clear();
 
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeTruthy();
     expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
     expect(element(by.id('sortcodeFeedback')).getText()).toEqual('');
   });
@@ -42,7 +42,7 @@ describe('Sortcode', function () {
     sortcodePt3.clear().sendKeys('33');
 
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeFalsy();
     expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
     expect(element(by.id('sortcodeFeedback')).getText()).toEqual('112233');
   });
@@ -54,7 +54,7 @@ describe('Sortcode', function () {
     sortcodePt3.clear().sendKeys('88');
 
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeTruthy();
     expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
     expect(element(by.id('sortcodeFeedback')).getText()).toEqual('a1b288');
   });
@@ -66,7 +66,7 @@ describe('Sortcode', function () {
     sortcodePt3.clear().sendKeys('1');
 
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeTruthy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeTruthy();
     expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
     expect(element(by.id('sortcodeFeedback')).getText()).toEqual('111');
   });
@@ -78,7 +78,7 @@ describe('Sortcode', function () {
     sortcodePt3.clear().sendKeys('01');
 
     submit.click();
-    expect(element(by.id('sortcode0-error-message')).isPresent()).toBeFalsy();
+    expect(element(by.id('sortcode0-error')).isPresent()).toBeFalsy();
     expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
     expect(element(by.id('sortcodeFeedback')).getText()).toEqual('010101');
   });

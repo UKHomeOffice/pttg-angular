@@ -23,7 +23,7 @@ describe('HOD Forms:', function () {
 
       it('should be reporting that the start date is required', function () {
         expect(element(by.id('error-summary-list')).all(by.tagName('li')).first().getText()).toEqual('The start date is invalid');
-        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Enter a valid start date');
+        expect(element(by.id('startdate0-error')).getText()).toEqual('Enter a valid start date');
       });
 
       it('should report that dates are invalid', function () {
@@ -36,12 +36,12 @@ describe('HOD Forms:', function () {
         submit.click();
 
         expect(element(by.id('error-summary-list')).all(by.tagName('li')).get(0).getText()).toEqual('The start date is invalid');
-        expect(element(by.id('startdate0-error-message')).getText()).toEqual('Enter a valid start date');
+        expect(element(by.id('startdate0-error')).getText()).toEqual('Enter a valid start date');
       });
 
       it('should display custom error messages', function () {
         expect(element(by.id('error-summary-list')).all(by.tagName('li')).get(1).getText()).toEqual('The end date is unacceptable');
-        expect(element(by.id('enddate1-error-message')).getText()).toEqual('No good');
+        expect(element(by.id('enddate1-error')).getText()).toEqual('No good');
       });
 
       it('should remove all errors when dates are once again correct', function () {
@@ -77,7 +77,7 @@ describe('HOD Forms:', function () {
           dobYear.sendKeys('1974');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
           expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeTruthy();
         });
@@ -88,7 +88,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1974');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
         });
 
         it('should fail if Date 1 year greater', function () {
@@ -97,7 +97,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1975');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
         });
 
       });
@@ -109,7 +109,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1974');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
           expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
         });
@@ -120,7 +120,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1974');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
         });
 
         it('should pass if Date 1 year less than', function () {
@@ -129,7 +129,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1973');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
         });
       });
 
@@ -140,7 +140,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1974');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
           expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
         });
@@ -161,7 +161,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1950');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
           expect(element(by.css('.error-summary')).isPresent()).toBeTruthy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeTruthy();
         });
@@ -172,7 +172,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1950');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
         });
 
         it('should fail if Date 1 year before', function () {
@@ -181,7 +181,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1949');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeTruthy();
+          expect(element(by.id('dob-error')).isPresent()).toBeTruthy();
         });
 
       });
@@ -193,7 +193,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1950');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
           expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
         });
@@ -204,7 +204,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1950');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
         });
 
         it('should pass if Date 1 year greater than', function () {
@@ -213,7 +213,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1951');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
         });
       });
 
@@ -224,7 +224,7 @@ describe('HOD Forms:', function () {
           dobYear.clear().sendKeys('1950');
 
           submit.click();
-          expect(element(by.id('dob-error-message')).isPresent()).toBeFalsy();
+          expect(element(by.id('dob-error')).isPresent()).toBeFalsy();
           expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
           expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
         });

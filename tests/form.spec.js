@@ -75,29 +75,29 @@ describe('HOD Forms:', function () {
       });
 
       it('should show error messages next to invalid field', function () {
-        var item = element(by.id('input0-error-message'));
+        var item = element(by.id('input0-error'));
         expect(item.isPresent()).toBeTruthy();
       });
 
       it('should not show error against valid field', function () {
-        var error = element(by.id('surname-error-message'));
+        var error = element(by.id('surname-error'));
         expect(error.isPresent()).toBeFalsy();
       });
 
       it('should not show an error when a blank field has required="false"', function () {
-        expect(element(by.id('forename-error-message')).isPresent()).toBeFalsy();
+        expect(element(by.id('forename-error')).isPresent()).toBeFalsy();
       });
 
       it('should not remove the error message when the field changes', function () {
         var el = element(by.id('input0-wrapper'));
         var inp = el.element(by.tagName('input'));
         inp.sendKeys('Something');
-        expect(element(by.id('input0-error-message')).isPresent()).toBeTruthy();
+        expect(element(by.id('input0-error')).isPresent()).toBeTruthy();
       });
 
       it('should remove the error message when the invalid field has been corrected and submit is pressed', function () {
         submit.click();
-        expect(element(by.id('input0-error-message')).isPresent()).toBeFalsy();
+        expect(element(by.id('input0-error')).isPresent()).toBeFalsy();
       });
 
       it('should remove all errors when all fields are valid', function () {
@@ -121,7 +121,7 @@ describe('HOD Forms:', function () {
   describe('Number input', function () {
     // by this time the form has been submitted several times
     it('should not show an error when the content is numeric', function () {
-      expect(element(by.id('numTest-error-message')).isPresent()).toBeFalsy();
+      expect(element(by.id('numTest-error')).isPresent()).toBeFalsy();
     });
 
     it('should error when the content is non numeric', function () {
@@ -129,15 +129,15 @@ describe('HOD Forms:', function () {
 
       submit.click();
 
-      expect(element(by.id('numTest-error-message')).isPresent()).toBeTruthy();
-      expect(element(by.id('numTest-error-message')).getText()).toEqual('Not numeric');
+      expect(element(by.id('numTest-error')).isPresent()).toBeTruthy();
+      expect(element(by.id('numTest-error')).getText()).toEqual('Not numeric');
     });
 
     it('should error when the number input exceeds the max limit', function () {
       element(by.id('maxTest')).clear().sendKeys('124');
       submit.click();
-      expect(element(by.id('maxTest-error-message')).getText()).toEqual('Exceeds the maximum');
-      expect(element(by.id('maxTest-error-message')).isPresent()).toBeTruthy();
+      expect(element(by.id('maxTest-error')).getText()).toEqual('Exceeds the maximum');
+      expect(element(by.id('maxTest-error')).isPresent()).toBeTruthy();
     });
 
     it('should not allow more characters than the string length of the max value', function () {
