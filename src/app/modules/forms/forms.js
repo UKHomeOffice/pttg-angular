@@ -161,7 +161,8 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             var validate = function () {
 
               if (scope.hidden) {
-                // return true;
+                // if hidden we can't allow this item to trigger an invalid form
+                return true;
               }
 
               if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
