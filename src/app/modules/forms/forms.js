@@ -162,6 +162,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
 
               if (scope.hidden) {
                 // if hidden we can't allow this item to trigger an invalid form
+                console.log('Is hidden so must be valid');
                 return true;
               }
 
@@ -263,6 +264,9 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             // clear the components error message
             console.log('VALID', obj.config.id, inp.$valid);
             obj.displayError = '';
+          } else if (obj.error.msg === '') {
+            // NO ERROR MESSAGE?
+            return;
           } else {
             // show the message within the component
             console.log('INVALID', obj.config.id, inp.$valid);
@@ -412,9 +416,10 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
         };
 
         scope.radioClick = function (opt) {
-          var formScope = formCtrl.getScope();
-          var frm = formScope[formScope.name];
+          // var formScope = formCtrl.getScope();
+          // var frm = formScope[formScope.name];
           scope.field = opt.value;
+          scope.$applyAsync();
         };
       };
     }
