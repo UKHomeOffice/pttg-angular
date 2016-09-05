@@ -160,6 +160,10 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
 
             var validate = function () {
 
+              if (scope.hidden) {
+                // return true;
+              }
+
               if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
                 // it is required (do this test before val is still a string)
                 return me.getError('required', scope);
@@ -178,7 +182,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                   return me.getError('max', scope);
                 }
               }
-              // console.log('validfunc', scope.name, val);
               return true;
             };
 
@@ -248,18 +251,20 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
         // check each component of the form
         _.each(objs, function (obj) {
-          console.log(obj);
+          var inp = obj.getInput();
+
           if (obj.config.hidden) {
+            console.log('HIDDEN', obj, inp.$valid);
             return;
           }
-          // console.log(obj);
-          var inp = obj.getInput();
+
           if (inp.$valid) {
             // clear the components error message
-            console.log('VALID', obj.config.id);
+            console.log('VALID', obj.config.id, inp.$valid);
             obj.displayError = '';
           } else {
             // show the message within the component
+            console.log('INVALID', obj.config.id, inp.$valid);
             obj.displayError = obj.error.msg
 
             switch (obj.type) {

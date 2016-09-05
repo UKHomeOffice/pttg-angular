@@ -38,6 +38,8 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     n: 123,
     max: 10,
     float: 1.25,
+    hiddenText: 'Hidden',
+    hiddenNumber: 0,
 
     // radio
     sType: 'xnondoctorate',
@@ -48,7 +50,9 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
 
     //
     sortcode: '123456',
-    sortcode2: ''
+    sortcode2: '',
+
+    hiddenDate: '1974-06-23'
   };
 
   // config for radio item
@@ -97,6 +101,16 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     }
   };
 
+  $scope.confHiddenText = {
+    hidden: true
+  };
+
+  $scope.confHiddenNumber = {
+    hidden: true,
+    max: 999,
+    min: 100
+  };
+
   $scope.confEnd = {
     errors: {
       invalid: {
@@ -109,6 +123,10 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
   $scope.confDob = {
     max: '1974-05-13',
     min: '1950-05-13'
+  };
+
+  $scope.confHiddenDate = {
+    hidden: true
   };
 
   $scope.submit = function () {
