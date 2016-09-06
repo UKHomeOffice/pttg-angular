@@ -121,7 +121,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             scope.config = {};
           }
 
-
           // set the default configs
           scope.config = angular.merge({
             id: attrs.name,
@@ -164,11 +163,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
           };
 
           scope.validfunc = function (val) {
-
             var validate = function () {
-
-
-
               if (scope.hidden) {
                 // if hidden we can't allow this item to trigger an invalid form
                 console.log('Is hidden so must be valid');
@@ -220,8 +215,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                   return me.getError('length', scope);
                 }
               }
-
-
 
               return true;
             };
@@ -548,9 +541,17 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
           if (scope.config.hidden) {
             return;
           }
+          scope.updateFieldValue();
+          _.defer(function () {
+            scope.validfunc();
+          });
+
+        };
+
+        scope.updateFieldValue = function () {
           var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
           scope.field = mom.format('YYYY-MM-DD');
-          scope.validfunc();
+          console.log('updateFieldValue', scope.field);
         };
 
         scope.isValid = function () {
@@ -570,9 +571,8 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
           }
 
           var validate = function () {
-
             if (scope.config.validate) {
-              var custom = scope.config.validate(val, scope);
+              var custom = scope.config.validate(scope.field, scope);
               if (custom !== true) {
                 return custom;
               }
