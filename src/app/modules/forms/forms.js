@@ -167,10 +167,19 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
 
             var validate = function () {
 
+
+
               if (scope.hidden) {
                 // if hidden we can't allow this item to trigger an invalid form
                 console.log('Is hidden so must be valid');
                 return true;
+              }
+
+              if (scope.config.validate) {
+                var custom = scope.config.validate(val, scope);
+                if (custom !== true) {
+                  return custom;
+                }
               }
 
               if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
@@ -288,6 +297,13 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
           if (obj.config.hidden) {
             console.log('HIDDEN', obj, inp.$valid);
             return;
+          }
+
+          if (scope.config.validate) {
+            var custom = scope.config.validate(val, scope);
+            if (custom !== true) {
+              return custom;
+            }
           }
 
           if (inp.$valid) {
@@ -559,7 +575,17 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
           if (scope.config.hidden) {
             return true;
           }
+
           var validate = function () {
+
+            if (scope.config.validate) {
+              var custom = scope.config.validate(val, scope);
+              if (custom !== true) {
+                return custom;
+              }
+            }
+
+
             if (scope.isBlank()) {
               if (scope.config.required) {
                 // field is blank but is required

@@ -81,7 +81,13 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
   ];
 
   $scope.confForename = {
-    id: 'specficIDcanBeGiven'
+    id: 'specficIDcanBeGiven',
+    validate: function (val, scope) {
+      if (!val || val.substr(0, 1) !== 'a') {
+        return {msg: 'Does not begin with a', summary: 'Does not begin with a'};
+      }
+      return true;
+    }
   };
 
   $scope.confSurname = {
