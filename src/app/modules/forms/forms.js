@@ -121,9 +121,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             scope.config = {};
           }
 
-          if (scope.config.max) {
-            attrs.$set('max', scope.config.max);
-          };
 
           // set the default configs
           scope.config = angular.merge({
@@ -137,6 +134,10 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
               max: {
                 msg: 'Exceeds the maximum',
                 summary: attrs.label + ' exceeds the maximum'
+              },
+              min: {
+                msg: 'Below the minimum',
+                summary: attrs.label + ' below the minimum'
               }
             },
             classes: {
@@ -150,7 +151,13 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
           formCtrl.addObj(scope);
 
           // set the maxlength
-          scope.maxlength = (attrs.max) ? attrs.max.length : '';
+          if (scope.config.length) {
+            scope.maxlength = scope.config.length;
+          } else if (scope.config.max) {
+            scope.maxlength = scope.config.max.toString().length;
+          } else {
+            scope.maxlength = '';
+          }
 
           scope.getInput = function () {
             return formCtrl.getForm()[attrs.name];
@@ -171,6 +178,11 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                 return me.getError('required', scope);
               }
 
+              if (scope.config.length && val.length !== Number(scope.config.length)) {
+                // length is incorrect
+                return me.getError('length', scope);
+              };
+
               if (scope.type === 'number') {
                 // only apply these tests if its a number type
                 val = Number(val);
@@ -178,12 +190,30 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                   // not a number
                   return me.getError('numeric', scope);
                 }
-
-                if (attrs.max && val > Number(attrs.max)) {
+                console.log(scope.config.id, scope.config.max);
+                if (scope.config.max && val > Number(scope.config.max)) {
                   // is it greater than the max
                   return me.getError('max', scope);
                 }
+
+                if (scope.config.min && val < Number(scope.config.min)) {
+                  // is it greater than the max
+                  return me.getError('min', scope);
+                }
+              } else {
+                if (scope.config.max && val.length > Number(scope.config.max)) {
+                  // is too long
+                  return me.getError('length', scope);
+                }
+
+                if (scope.config.min && val.length < Number(scope.config.min)) {
+                  // is too short
+                  return me.getError('length', scope);
+                }
               }
+
+
+
               return true;
             };
 

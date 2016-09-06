@@ -22,7 +22,7 @@ describe('HOD Forms:', function () {
       });
 
       it('should be reporting that the start date is required', function () {
-        expect(element(by.id('error-summary-list')).all(by.tagName('li')).first().getText()).toEqual('The start date is invalid');
+        expect(element(by.id('error-summary-list')).all(by.tagName('li')).first().getText()).toEqual('Cannot accept this value for start date');
         expect(element(by.id('startdate0-error')).getText()).toEqual('Enter a valid start date');
       });
 

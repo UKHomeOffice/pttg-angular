@@ -36,10 +36,13 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     // text fields
     surname: 'Stuart',
     n: 123,
-    max: 10,
+    max: 123,
+    min: 123,
+    minMax: 15,
     float: 1.25,
     hiddenText: 'Hidden',
     hiddenNumber: 0,
+    len: '12345678',
 
     // radio
     sType: 'xnondoctorate',
@@ -90,6 +93,23 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     }
   };
 
+  $scope.confMax = {
+    max: 123
+  };
+
+  $scope.confMin = {
+    min: 123
+  };
+
+  $scope.confMinMax = {
+    min: 10,
+    max: 20
+  };
+
+  $scope.confLength = {
+    length: 8
+  };
+
   $scope.confFloat = {
     max: 123,
     float: true,
@@ -110,6 +130,14 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
     max: 999,
     min: 100
   };
+
+  $scope.confStart = {
+    errors: {
+      required: {
+        summary: 'Cannot accept this value for start date'
+      }
+    }
+  }
 
   $scope.confEnd = {
     errors: {
