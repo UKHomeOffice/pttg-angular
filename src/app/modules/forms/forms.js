@@ -299,13 +299,6 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             return;
           }
 
-          if (scope.config.validate) {
-            var custom = scope.config.validate(val, scope);
-            if (custom !== true) {
-              return custom;
-            }
-          }
-
           if (inp.$valid) {
             // clear the components error message
             console.log('VALID', obj.config.id, inp.$valid);
