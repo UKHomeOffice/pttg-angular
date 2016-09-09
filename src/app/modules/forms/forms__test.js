@@ -35,6 +35,7 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
   $scope.values = {
     // text fields
     surname: 'Stuart',
+    forename: 'Adam',
     n: 123,
     max: 123,
     min: 123,
@@ -83,7 +84,7 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
   $scope.confForename = {
     id: 'specficIDcanBeGiven',
     validate: function (val, scope) {
-      if (!val || val.substr(0, 1) !== 'a') {
+      if (!val || val.substr(0, 1).toLowerCase() !== 'a') {
         return {msg: 'Does not begin with a', summary: 'Does not begin with a'};
       }
       return true;

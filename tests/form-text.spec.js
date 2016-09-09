@@ -3,7 +3,7 @@ describe('HOD Forms:', function () {
   var submit;
   var form;
   var hodTextInstances;
-  describe('Text input', function () {
+  describe('Text input:', function () {
 
     it('should have a forms test page just for text input', function () {
       browser.get('http://127.0.0.1:3000/#/forms-test/text');
@@ -57,7 +57,7 @@ describe('HOD Forms:', function () {
       });
     });
 
-    describe('Basic error messages', function () {
+    describe('Validation:', function () {
       it('should not show any errors before the form is submitted', function () {
         expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
       });
@@ -114,6 +114,38 @@ describe('HOD Forms:', function () {
         // check that now that the form has been revalidated that no errors are showing
         expect(element(by.css('.error-summary')).isPresent()).toBeFalsy();
         expect(element(by.css('.form-group.error')).isPresent()).toBeFalsy();
+      });
+    });
+  });
+
+  describe('Custom validator:', function () {
+    describe('Value should begin with "a" or "A"', function () {
+      it('should fail if blank', function() {
+        var fn = element(by.id('specficIDcanBeGiven'));
+        fn.clear();
+        submit.click();
+        expect(element(by.id('specficIDcanBeGiven-error')).isPresent()).toBeTruthy();
+      });
+
+      it('should pass if "a"', function() {
+        var fn = element(by.id('specficIDcanBeGiven'));
+        fn.clear().sendKeys('a');
+        submit.click();
+        expect(element(by.id('specficIDcanBeGiven-error')).isPresent()).toBeFalsy();
+      });
+
+      it('should fail if "za"', function() {
+        var fn = element(by.id('specficIDcanBeGiven'));
+        fn.clear().sendKeys('za');
+        submit.click();
+        expect(element(by.id('specficIDcanBeGiven-error')).isPresent()).toBeTruthy();
+      });
+
+      it('should pass if "A"', function() {
+        var fn = element(by.id('specficIDcanBeGiven'));
+        fn.clear().sendKeys('Adam');
+        submit.click();
+        expect(element(by.id('specficIDcanBeGiven-error')).isPresent()).toBeFalsy();
       });
     });
   });
