@@ -166,7 +166,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             var validate = function () {
               if (scope.hidden) {
                 // if hidden we can't allow this item to trigger an invalid form
-                console.log('Is hidden so must be valid');
                 return true;
               }
 
@@ -194,7 +193,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                   // not a number
                   return me.getError('numeric', scope);
                 }
-                console.log(scope.config.id, scope.config.max);
+
                 if (scope.config.max && val > Number(scope.config.max)) {
                   // is it greater than the max
                   return me.getError('max', scope);
@@ -229,8 +228,6 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             scope.error = result;
             return false;
           };
-
-          // scope.validfunc();
         };
       },
     };
@@ -288,20 +285,17 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
           var inp = obj.getInput();
 
           if (obj.config.hidden) {
-            console.log('HIDDEN', obj, inp.$valid);
             return;
           }
 
           if (inp.$valid) {
             // clear the components error message
-            console.log('VALID', obj.config.id, inp.$valid);
             obj.displayError = '';
           } else if (obj.error.msg === '') {
             // NO ERROR MESSAGE?
             return;
           } else {
             // show the message within the component
-            console.log('INVALID', obj.config.id, inp.$valid);
             obj.displayError = obj.error.msg
 
             switch (obj.type) {
@@ -326,7 +320,6 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
             errorList.push({ id: obj.id, msg: obj.error.summary, code: obj.error.errorCode, anchor: a});
           }
         });
-        // console.log(errorList);
         if (angular.toJson(errorList) !== angular.toJson($scope.errorList)) {
           $scope.errorList = errorList;
         }
@@ -335,7 +328,6 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
       $scope.errorClicked = function (anchor) {
         var e = angular.element(document.getElementById(anchor));
-        // console.log('errorClicked', anchor, e);
         if (e[0]) {
           e[0].focus();
         }
@@ -485,7 +477,6 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
 
         if (typeof attrs.required === 'string') {
           scope.config.required = (attrs.required === 'false') ? false: true;
-          // console.log(scope.config);
         }
 
         // set the default configs
@@ -506,9 +497,6 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
           }
         }, scope.config);
 
-        console.log('Date', scope.config.id);
-
-        //
         formCtrl.addObj(scope);
 
         scope.getInput = function () {
@@ -551,7 +539,6 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
         scope.updateFieldValue = function () {
           var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
           scope.field = mom.format('YYYY-MM-DD');
-          console.log('updateFieldValue', scope.field);
         };
 
         scope.isValid = function () {

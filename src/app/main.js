@@ -1,13 +1,8 @@
 var app = angular.module('hod.proving', [
   'ui.router',
   'ngAria',
-  'hod.header',
-  'hod.io',
-  'hod.home',
-  'hod.financialstatus',
   'hod.forms',
-  'hod.formsTest',
-  'hod.ui'
+  'hod.formsTest'
 ]);
 
 
