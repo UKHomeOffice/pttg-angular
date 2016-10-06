@@ -19,11 +19,6 @@ var defaultAttrs = function (attrs, defaults) {
   if (!attrs['name']) {
     attrs.$set('name', getInputName(attrs));
   }
-
-  // // force an ID
-  // if (!attrs['id']) {
-  //   attrs.$set('id', attrs.name);
-  // }
 };
 
 
@@ -54,10 +49,48 @@ var lcFirst = function (str) {
 };
 
 
+formsModule.factory('FormValidatorsService', [function () {
+  var me = this;
+  var defs = {};
+  this.defineValidator = function (id, func) {
+    defs[id] = func;
+  };
+
+  this.getValidator = function (id) {
+    return defs[id];
+  };
+
+  this.defineValidator('required', function (val, scope) {
+    return (_.isUndefined(val) || String(val).length === 0) ? false: true;
+  });
+
+  this.defineValidator('length', function (val, scope) {
+    return (val.length === Number(scope.config.length));
+  });
+
+  this.defineValidator('numeric', function (val, scope) {
+    var num = Number(val);
+    return (!_.isNaN(num));
+  });
+
+  this.defineValidator('max', function (val, scope) {
+    var num = Number(val);
+    return (num <= Number(scope.config.max));
+  });
+
+  this.defineValidator('min', function (val, scope) {
+    var num = Number(val);
+    return (num >= Number(scope.config.min));
+  });
+
+  return me;
+}]);
+
+
 /**
   * create the FormsService static to handle global form functions
 */
-formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
+formsModule.factory('FormsService', ['$rootScope', 'FormValidatorsService', function ($rootScope, FormValidatorsService) {
   var register = {};
   var me = this;
   this.registerForm = function (f) {
@@ -117,14 +150,18 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
           scope.required = (attrs.required === 'false') ? false: true;
           scope.type = conf.type;
           scope.displayError = '';
+          scope.validators = {};
           if (!scope.config) {
-            scope.config = {};
+            scope.config = {
+              required: scope.required
+            };
           }
 
           // set the default configs
           scope.config = angular.merge({
             id: attrs.name,
             hidden: false,
+            type: conf.type,
             errors: {
               numeric: {
                 msg: 'Not numeric',
@@ -146,6 +183,7 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             suffix: '',
           }, scope.config);
 
+
           // register this component with the form controller
           formCtrl.addObj(scope);
 
@@ -162,6 +200,27 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
             return formCtrl.getForm()[attrs.name];
           };
 
+          if (scope.config.required) {
+            scope.validators['required'] = FormValidatorsService.getValidator('required');
+          }
+
+          if (scope.config.type === 'number') {
+            scope.validators['numeric'] = FormValidatorsService.getValidator('numeric');
+          }
+
+          if (scope.config.length) {
+            scope.validators['length'] = FormValidatorsService.getValidator('length');
+          }
+
+          if (scope.config.min) {
+            scope.validators['min'] = FormValidatorsService.getValidator('min');
+          }
+
+          if (scope.config.max) {
+            scope.validators['max'] = FormValidatorsService.getValidator('max');
+          }
+
+
           scope.validfunc = function (val) {
             var validate = function () {
               if (scope.hidden) {
@@ -176,43 +235,13 @@ formsModule.factory('FormsService', ['$rootScope', function ($rootScope) {
                 }
               }
 
-              if (scope.required && (_.isUndefined(val) || String(val).length === 0)) {
-                // it is required (do this test before val is still a string)
-                return me.getError('required', scope);
-              }
+              var unacceptable = _.findKey(scope.validators, function (func) {
+                return (!func(val, scope));
+              });
 
-              if (scope.config.length && val.length !== Number(scope.config.length)) {
-                // length is incorrect
-                return me.getError('length', scope);
-              };
-
-              if (scope.type === 'number') {
-                // only apply these tests if its a number type
-                val = Number(val);
-                if (_.isNaN(val)) {
-                  // not a number
-                  return me.getError('numeric', scope);
-                }
-
-                if (scope.config.max && val > Number(scope.config.max)) {
-                  // is it greater than the max
-                  return me.getError('max', scope);
-                }
-
-                if (scope.config.min && val < Number(scope.config.min)) {
-                  // is it greater than the max
-                  return me.getError('min', scope);
-                }
-              } else {
-                if (scope.config.max && val.length > Number(scope.config.max)) {
-                  // is too long
-                  return me.getError('length', scope);
-                }
-
-                if (scope.config.min && val.length < Number(scope.config.min)) {
-                  // is too short
-                  return me.getError('length', scope);
-                }
+              if (unacceptable) {
+                console.log('unacceptable', unacceptable);
+                return me.getError(unacceptable, scope);
               }
 
               return true;
@@ -440,8 +469,6 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
         };
 
         scope.radioClick = function (opt) {
-          // var formScope = formCtrl.getScope();
-          // var frm = formScope[formScope.name];
           scope.field = opt.value;
           scope.$applyAsync();
         };
