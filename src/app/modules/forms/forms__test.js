@@ -157,11 +157,16 @@ formsTestModule.controller('FormsTestCtrl', ['$scope', '$state', function ($scop
 
   $scope.confDob = {
     max: '1974-05-13',
-    min: '1950-05-13'
+    min: '1950-05-13',
+    required: false
   };
 
   $scope.confHiddenDate = {
     hidden: true
+  };
+
+  $scope.confSortcode2 = {
+    required: false
   };
 
   $scope.submit = function () {

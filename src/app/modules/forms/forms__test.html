@@ -54,7 +54,7 @@
 
     <hod-date label="End date" hint="When does this thing end" field="values.end" config="confEnd"></hod-date>
 
-    <hod-date label="Age date" hint="When were you born?" name="dob" field="values.dob" config="confDob" required="false"></hod-date>
+    <hod-date label="Age date" hint="When were you born?" name="dob" field="values.dob" config="confDob"></hod-date>
 
     <hod-date label="Hidden date" name="hide" field="values.hiddenDate" config="confHiddenDate"></hod-date>
 
@@ -69,7 +69,7 @@
   <hod-form id="testFormSortcode">
     <hod-sortcode label="Sort code" hint="For example 12 34 56" field="values.sortcode" config="confSortcode"></hod-sortcode>
 
-    <hod-sortcode label="Sort code2" field="values.sortcode2" required="false"></hod-sortcode>
+    <hod-sortcode label="Sort code2" field="values.sortcode2" config="confSortcode2"></hod-sortcode>
 
     <p id="sortcodeFeedback">{{ values.sortcode }}</p>
     <p id="sortcode2Feedback">{{ values.sortcode2 }}</p>

@@ -147,14 +147,11 @@ formsModule.factory('FormsService', ['$rootScope', 'FormValidatorsService', func
       compile: function(element, attrs) {
         defaultAttrs(attrs, {name: '', hint: '', label: ''});
         return function(scope, element, attrs, formCtrl) {
-          scope.required = (attrs.required === 'false') ? false: true;
           scope.type = conf.type;
           scope.displayError = '';
           scope.validators = {};
-          if (!scope.config) {
-            scope.config = {
-              required: scope.required
-            };
+          if (!_.isObject(scope.config)) {
+            scope.config = {};
           }
 
           // set the default configs
@@ -162,6 +159,7 @@ formsModule.factory('FormsService', ['$rootScope', 'FormValidatorsService', func
             id: attrs.name,
             hidden: false,
             type: conf.type,
+            required: true,
             errors: {
               numeric: {
                 msg: 'Not numeric',
@@ -240,7 +238,6 @@ formsModule.factory('FormsService', ['$rootScope', 'FormValidatorsService', func
               });
 
               if (unacceptable) {
-                console.log('unacceptable', unacceptable);
                 return me.getError(unacceptable, scope);
               }
 
