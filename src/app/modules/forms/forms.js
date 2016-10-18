@@ -245,13 +245,16 @@ formsModule.factory('FormsService', ['$rootScope', 'FormValidatorsService', func
             };
 
             var result = validate();
-            $rootScope.$applyAsync();
+            // $rootScope.$applyAsync();
+
             if (result === true) {
               scope.error = {code: '', summary: '', msg: ''};
+              scope.getInput().$setValidity('text', true);
               return true;
             }
 
             scope.error = result;
+            scope.getInput().$setValidity('text', false);
             return false;
           };
         };
@@ -313,6 +316,8 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
           if (obj.config.hidden) {
             return;
           }
+
+          obj.validfunc(inp.$viewValue);
 
           if (inp.$valid) {
             // clear the components error message
