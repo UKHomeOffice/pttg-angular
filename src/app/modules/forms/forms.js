@@ -566,8 +566,12 @@ formsModule.directive('hodDate', ['FormsService', function (FormsService) {
         };
 
         scope.updateFieldValue = function () {
-          var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
-          scope.field = mom.format('YYYY-MM-DD');
+          if (scope.isBlank()) {
+            scope.field = '';
+          } else {
+            var mom = moment(scope.data.year + '-' + scope.data.month + '-' + scope.data.day, 'YYYY-MM-DD');
+            scope.field = mom.format('YYYY-MM-DD');
+          }
         };
 
         scope.isValid = function () {
