@@ -790,16 +790,18 @@ formsModule.directive('hodSubmit', [function () {
       if (attrs.value === undefined) {
         attrs.$set('value', 'Submit');
       }
+
       return function(scope, element, attrs, formCtrl) {
         scope.type = 'submit';
-        var formEl = formCtrl.getForm();
-        scope.disable = function () {
-
+        // var formEl = formCtrl.getForm();
+        scope.shouldDisable = function () {
+          return (attrs.disabled === 'true' || attrs.disabled == 1) ? true : false;
         }
       };
     },
     scope: {
-      value: '@value'
+      value: '@value',
+
     },
     templateUrl: 'modules/forms/forms-submit.html'
   }
