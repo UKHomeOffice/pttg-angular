@@ -466,6 +466,13 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
           return false;
         };
 
+        scope.isSelected = function (opt) {
+          // console.log(' ');
+          // console.log('isSelected opt', opt.value, typeof opt.value);
+          // console.log('isSelected field', scope.field, typeof scope.field);
+          return opt.value === scope.field;
+        };
+
         scope.getInput = function () {
           return formCtrl.getForm()[attrs.name];
         };
