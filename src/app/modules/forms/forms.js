@@ -307,7 +307,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
         _.each(objs, function (obj) {
           var inp = obj.getInput()
 
-          if (obj.config.hidden) {
+          if (obj.config.hidden || _.isUndefined(inp)) {
             return
           }
 
@@ -468,6 +468,9 @@ formsModule.directive('hodRadio', ['FormsService', function (FormsService) {
         scope.radioClick = function (opt) {
           scope.field = opt.value
           scope.$applyAsync()
+          if (scope.config.onClick) {
+            scope.config.onClick(opt, scope)
+          }
         }
       }
     }
