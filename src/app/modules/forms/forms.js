@@ -277,7 +277,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
 
     controller: ['$scope', '$element', '$attrs', '$window', '$timeout', function ($scope, $element, $attrs, $window, $timeout) {
       var me = this
-      var objs = $scope.objs = []
+      var objs = $scope.objs = {}
       $scope.errorList = []
 
       defaultAttrs($attrs, { id: 'hodForm', name: 'hodForm', displayErrors: false })
@@ -297,7 +297,7 @@ formsModule.directive('hodForm', ['$anchorScroll', 'FormsService', function ($an
       }
 
       this.addObj = function (obj) {
-        objs.push(obj)
+        objs[obj.config.id] = obj
       }
 
       this.validateForm = function () {
